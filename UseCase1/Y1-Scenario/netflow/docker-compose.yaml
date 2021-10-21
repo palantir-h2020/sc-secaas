@@ -1,0 +1,80 @@
+# Kafka https://kafka.apache.org/quickstart
+
+version: "3.7"
+services:
+    zookeeper:
+        restart: always
+        hostname: zookeeper
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.5
+    
+    kafka:
+        restart: always
+        image: wurstmeister/kafka
+        hostname: kafka
+        environment:
+            #DOCKER_API_VERSION: 1.22
+            KAFKA_ADVERTISED_HOST_NAME: kafka
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.6
+        depends_on:
+        - zookeeper
+        volumes:
+            - "./results:/opt/results"
+        #command: "kafka-topics.sh --create --topic quickstart-events --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1"
+        command: "kafka-console-consumer.sh --topic snort --from-beginning --bootstrap-server localhost:9092 > /opt/results/limited_fields.json"
+
+    netflow-generator:
+        image: networkstatic/nflow-generator
+        hostname: netflow-generator
+        command: "/go/bin/nflow-generator -t 10.1.1.100 -p 2055"
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.10
+
+    #collector:
+    #    build: nfdump-collector
+    #    command: /usr/local/bin/nfcapd -T all -l /data -S 1 -w -z -p 9999
+    #    ports:
+    #        - "9999:9999/udp"
+    #    restart: always
+    #    networks:
+    #        palantir-backend:
+    #            ipv4_address: 10.1.1.20
+
+    filebeat:
+        build: filebeat
+        command: filebeat -e
+        ports: 
+            - "2055:2055/udp"
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.100
+
+    
+    filebeat:
+        build: filebeat-netflow-module
+        command: filebeat -e
+        ports: 
+            - "2055:2055/udp"
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.200
+    
+networks:
+    sme-network:
+        name: sme-network
+        ipam:
+            config:
+                - subnet: "192.168.150.0/24"
+    palantir-backend:
+        name: palantir-backend
+        ipam:
+            config:
+                - subnet: "10.1.1.0/24"

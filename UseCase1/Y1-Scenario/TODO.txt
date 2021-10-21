@@ -1,0 +1,11 @@
+Kafka terminal:
+    kafka-console-consumer.sh --topic snort --from-beginning --bootstrap-server localhost:9092
+
+Snort terminal:
+    service filebeat start
+    snort -i eth0 -c /etc/snort/etc/snort.conf -l /var/log/snort
+
+    
+Attacker:
+    nmap -p 1-65535 -T4 -A -v snort2
+    hping3 -1 snort2

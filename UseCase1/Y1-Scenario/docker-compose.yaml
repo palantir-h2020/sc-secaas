@@ -1,0 +1,153 @@
+# Kafka https://kafka.apache.org/quickstart
+
+version: "3.7"
+services:
+    zookeeper:
+        restart: always
+        hostname: zookeeper
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.5
+    
+    kafka:
+        restart: always
+        image: wurstmeister/kafka
+        hostname: kafka
+        environment:
+            #DOCKER_API_VERSION: 1.22
+            KAFKA_ADVERTISED_HOST_NAME: kafka
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.6
+        depends_on:
+        - zookeeper
+        #command: "kafka-topics.sh --create --topic quickstart-events --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1"
+        #command: "kafka-console-consumer.sh --topic snort --from-beginning --bootstrap-server localhost:9092"
+    
+    attacker:
+        restart: always
+        build: attacker
+        hostname: attacker
+        stdin_open: true
+        tty: true
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.100
+        depends_on: 
+            - secaas_snort
+        #command: "/bin/bash /root/init.sh"
+        command: bash
+        privileged: true
+        #command: "kafka-console-producer.sh --topic quickstart-events --bootstrap-server kafka:9092"
+
+    secaas_snort:
+        restart: always
+        build: snort2
+        hostname: snort2
+        stdin_open: true
+        tty: true
+        networks: 
+            # eth0
+            palantir-ids:
+                ipv4_address: 10.2.1.7
+            # eth 1
+            palantir-backend:
+                ipv4_address: 10.1.1.7
+        command: "bash"
+        depends_on:
+        - kafka
+        #command: "palantir-test:ZXVyb3BlLXdlc3QzLmdjcC5jbG91ZC5lcy5pbyQ0NzNkZGY5MTYwOTM0NDk2YjQxZTc2ZmM5NWFmMWViOCQ5MzVjNjg1ZDJiZDg0MzA2ODUyNzJhNjFhM2VkYjJhMA=="
+        volumes:
+            - "./snort2/portscanning.rules:/etc/snort/rules/local.rules"
+        #command: "snort -i eth0 -c /etc/snort/etc/snort.conf -l /var/log/snort"
+
+    #secaas_snort:
+    #    build: snort3
+    #    hostname: snort3
+    #    stdin_open: true
+    #    tty: true
+    #    networks: 
+    #        - palantir-backend
+    #    volumes:
+    #        - "./snort/portscanning.rules:/usr/local/snort/rules/portscanning.rules"
+    #    #command: "/usr/local/snort/bin/snort -c /usr/local/snort/etc/snort/snort.lua -i eth0 -l /var/log/snort --plugin-path /usr/local/snort/extra -k none"
+       
+    sme-db:
+        restart: always
+        build: sme-db
+        #image: mariadb:10.5
+        command: ['mysqld','--character-set-server=utf8mb4']
+        #volumes:
+        #- databasevolume:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        
+        hostname: sme-db
+        depends_on:
+        - secaas_snort
+        stdin_open: true
+        tty: true
+        networks: 
+            palantir-backend:
+                ipv4_address: 10.1.1.8
+            palantir-ids:
+                ipv4_address: 10.2.1.8
+        #privileged: true
+
+    sme-openemr:
+        restart: always
+        build: sme-openemr
+        ports:
+        - "80:80"
+        - "443:443"
+        #volumes:
+        #- logvolume01:/var/log
+        #- sitevolume:/var/www/localhost/htdocs/openemr/sites
+        environment:
+            MYSQL_HOST: 10.1.1.8
+            MYSQL_ROOT_PASS: root
+            MYSQL_USER: openemr
+            MYSQL_PASS: openemr
+            OE_USER: openemr
+            OE_PASS: openemr
+        depends_on:
+        - sme-db
+        - secaas_snort
+        hostname: sme-openemr
+        stdin_open: true
+        tty: true
+        networks: 
+            palantir-backend:
+                ipv4_address: 10.1.1.10
+            palantir-ids:
+                ipv4_address: 10.2.1.10
+        privileged: true
+        command: ['/bin/sh']
+
+#volumes:
+#    logvolume01: {}
+#    sitevolume: {}
+#    databasevolume: {}
+
+networks:
+    #palantir-frontend:
+    #    name: bridge
+    #    external: true
+    #    #network_mode: host 
+
+    palantir-backend:
+        internal: true
+        name: br1-palantir-internal
+        ipam:
+            config:
+                - subnet: "10.1.1.0/24"
+    palantir-ids:
+        internal: true
+        name: br2-palantir-ids
+        ipam:
+            config:
+                - subnet: "10.2.1.0/24"
