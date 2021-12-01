@@ -20,8 +20,3 @@ RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.3-a
 RUN dpkg -i filebeat-7.13.3-amd64.deb
 COPY ./filebeat.yml /etc/filebeat/filebeat.yml
 RUN filebeat modules enable snort
-
-# Username
-#    elastic
-#Password
-#    6dsi1yta6oJ87ng9v073OVvg
