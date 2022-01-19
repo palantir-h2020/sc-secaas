@@ -1,0 +1,4 @@
+name: snort
+app: snort
+replicaCount: 1
+image: jasonish/snort:latest

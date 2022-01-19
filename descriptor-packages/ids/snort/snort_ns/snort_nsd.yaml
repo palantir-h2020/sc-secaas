@@ -1,0 +1,22 @@
+nsd:
+  nsd:
+  - description: NS with snort VNF
+    df:
+    - id: default-df
+      vnf-profile:
+      - id: snort_knf
+        virtual-link-connectivity:
+        - constituent-cpd-id:
+          - constituent-base-element-id: snort_knf
+            constituent-cpd-id: mgmt-ext
+          virtual-link-profile-id: mgmtnet
+        vnfd-id: snort_knf
+    id: snort_ns
+    name: snort_ns
+    version: '1.0'
+    virtual-link-desc:
+    - id: mgmtnet
+      mgmt-network: true
+    vnfd-id:
+    - snort_knf
+
