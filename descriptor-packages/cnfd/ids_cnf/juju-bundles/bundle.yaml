@@ -2,7 +2,7 @@ description: Squid Bundle
 bundle: kubernetes
 applications:
   squid:
-    charm: ./snort
+    charm: ./snort_ubuntu-20.04-amd64.charm
     scale: 1
     resources:
       snort-image: lopeez97/snort2:latest
