@@ -1,0 +1,21 @@
+add-rule:
+    description: "Add rule to Snort config"
+    params:
+        rule:
+            description: "Rule to be added"
+            type: string
+            default: ""
+delete-rule:
+    description: "Delete rule to Snort config"
+    params:
+        rule:
+            description: "Rule to be deleted"
+            type: string
+            default: ""
+touch:
+    params:
+        filename:
+            description: Filename to the file that will be created - Full path
+            type: string
+    required:
+      - filename

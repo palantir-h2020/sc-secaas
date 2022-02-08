@@ -1,0 +1,25 @@
+name: snort
+summary: Kubernetes operator for Snort
+maintainers:
+    - Antonio López <antonio.lopez41@um.es>
+description: |
+    Snort is the foremost Open Source Intrusion Prevention System (IPS)
+    in the world. Snort IPS uses a series of rules that help define malicious
+    network activity and uses those rules to find packets that match against 
+    them and generates alerts for users.
+tags:
+    - proxy
+    - firewall
+    - web
+series:
+    - kubernetes
+deployment:
+    service: loadbalancer
+resources:
+    image:
+        type: oci-image
+        description: Docker image for snort
+        upstream-source: "lopeez97/snort2:latest"
+#provides:
+#    prometheus-target:
+#        interface: http
