@@ -1,0 +1,3 @@
+d79d0d6d2d423bd1e739c9750d8781bc	ids_cnf/snort_cnfd.yaml
+b088ac8f4e8a0c17d26c63fe34a4eabb	ids_cnf/juju-bundles/snort_ubuntu-20.04-amd64.charm
+4a5ffceb3cbd2a150e2c45053e1d3c72	ids_cnf/juju-bundles/bundle.yaml
