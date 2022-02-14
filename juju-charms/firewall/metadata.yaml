@@ -1,0 +1,25 @@
+name: iptnetflow
+summary: Kubernetes operator for Iptables with fprobe 
+maintainers:
+    - Antonio López <antonio.lopez41@um.es>
+description: |
+    Iptables is used to set up, maintain, and inspect the tables of IP packet 
+    filter rules in the Linux kernel. Several different tables may be defined. 
+    Each table contains a number of built-in chains and may also contain 
+    user-defined chains.
+tags:
+    - proxy
+    - firewall
+    - web
+series:
+    - kubernetes
+deployment:
+    service: loadbalancer
+resources:
+    image:
+        type: oci-image
+        description: Docker image for iptnetflow
+        upstream-source: "lopeez97/iptnetflow:latest"
+#provides:
+#    prometheus-target:
+#        interface: http

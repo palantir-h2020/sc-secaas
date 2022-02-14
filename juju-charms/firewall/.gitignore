@@ -1,0 +1,11 @@
+venv
+.vscode
+build
+*.charm
+.coverage
+coverage.xml
+.stestr
+cover
+release
+__pycache__
+.tox

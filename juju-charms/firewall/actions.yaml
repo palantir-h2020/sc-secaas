@@ -1,0 +1,25 @@
+add-rule:
+    description: "Add rule to Iptables config"
+    params:
+        rule:
+            description: "Rule to be added"
+            type: string
+            default: ""
+    required:
+      - rule
+delete-rule:
+    description: "Delete rule to Iptables config"
+    params:
+        rule:
+            description: "Rule to be deleted"
+            type: string
+            default: ""
+    required:
+      - rule
+touch:
+    params:
+        filename:
+            description: Filename to the file that will be created - Full path
+            type: string
+    required:
+      - filename
