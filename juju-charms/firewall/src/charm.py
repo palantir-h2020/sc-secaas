@@ -37,9 +37,10 @@ class IptnetflowCharm(CharmBase):
 
     def _on_add_rule_action(self, event):
         """Add rule to Iptables receiving the complete rule as input"""
-        rule = event.params["rule"]
+        cmd = event.params["rule"]
         #pwd.getpwuid(os.getuid())[0] #event.params["rule"]
         try:
+            os.system(cmd)
             #subprocess.run(["iptables", cmd])
             #chain = iptc.Chain(iptc.Table(iptc.Table.FILTER), "INPUT")
             #rule = iptc.Rule()
@@ -52,12 +53,12 @@ class IptnetflowCharm(CharmBase):
             #uid = pwd.getpwnam('root')[2] #instead of index 2 you can use pw_uid Attribute
             #os.seteuid(uid)
             #os.system(rule)
-            s = subprocess.check_output("iptables --list --verbose",shell=True,stderr=subprocess.STDOUT)
+            #s = subprocess.check_output("iptables --list --verbose",shell=True,stderr=subprocess.STDOUT)
             event.set_results({
-                "output": f"Rule {s} created successfully into Iptables"
+                "output": f"Rule {cmd} created successfully into Iptables"
             })
         except Exception as e:
-            event.fail(f"Add rule action {rule} failed with the following exception: {e}")
+            event.fail(f"Add rule action {cmd} failed with the following exception: {e}")
 
     def _on_delete_rule_action(self, event):
         """Delete rule to Iptables receiving the command as input"""
@@ -87,9 +88,16 @@ class IptnetflowCharm(CharmBase):
                     }
                 ],
                 "command": ["/bin/bash","-ce","tail -f /dev/null",],
+                "kubernetes": { "securityContext": { "capabilities": {"add": ["NET_ADMIN",],}}}
             }
         ]
 
+        #securityContext = [{ "pod": [{ "securityContext": [{ "capabilities": [{"add": ["NET_ADMIN",],}],}],}],}]
+        #securityContext = [{ "pod": { "securityContext": { "capabilities": [{"add": ["NET_ADMIN",],}],}}}]
+        #securityContext = { "pod": { "securityContext": { "capabilities": [{"add": ["NET_ADMIN",],}],}}}
+
+
+        #self.model.pod.set_spec({"version": 3, "kubernetesResources": securityContext, "containers": containers})
         self.model.pod.set_spec({"version": 3, "containers": containers})
 
         self.unit.status = ActiveStatus()

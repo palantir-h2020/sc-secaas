@@ -1,4 +1,5 @@
 
 git+https://github.com/canonical/operator/#egg=ops
 jinja2==2.11.3
+git+https://github.com/charmed-osm/charms.osm#egg=charms.osm
 #git+https://github.com/ldx/python-iptables
