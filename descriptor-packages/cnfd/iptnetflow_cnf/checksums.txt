@@ -1,0 +1,3 @@
+7be33239b0982c1c24c86f329c7efc8e	iptnetflow_cnf/iptnetflow_cnfd.yaml
+450082a10972302d958984dc0b0d1ad9	iptnetflow_cnf/juju-bundles/iptnetflow_ubuntu-20.04-amd64.charm
+8ad479456319e7fa96ed609a554f3008	iptnetflow_cnf/juju-bundles/bundle.yaml

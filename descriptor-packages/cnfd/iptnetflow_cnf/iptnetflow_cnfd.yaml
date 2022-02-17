@@ -1,0 +1,40 @@
+vnfd:
+  product-name: iptnetflow_cnf
+  version: "1.0"
+  provider: UMU
+  description: |
+    K8s container deployment of iptables + NetFlow collector ids for PALANTIR 
+  id: iptnetflow_cnf
+  mgmt-cp: mgmtnet-ext
+  ext-cpd:
+    - id: mgmtnet-ext
+      k8s-cluster-net: mgmtnet
+  kdu:
+    - name: iptnetflow-kdu
+      juju-bundle: bundle.yaml
+  k8s-cluster:
+    nets:
+      - id: mgmtnet
+  df:
+    - id: default-df
+      lcm-operations-configuration:
+        operate-vnf-op-config:
+          day1-2:
+            - id: iptnetflow-kdu
+              config-primitive:
+                - name: add-rule
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                    - name: rule
+                      data-type: STRING
+                      default-value: ""
+                - name: delete-url
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                    - name: rule
+                      data-type: STRING
+                      default-value: ""
