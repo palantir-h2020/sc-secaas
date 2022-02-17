@@ -1,7 +1,6 @@
 venv
 .vscode
 build
-*.charm
 .coverage
 coverage.xml
 .stestr
