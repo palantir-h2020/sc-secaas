@@ -21,55 +21,18 @@ class IptnetflowCharm(CharmBase):
         super().__init__(*args)
 
         self.framework.observe(self.on.config_changed, self.configure_pod)
-        self.framework.observe(self.on.add_rule_action, self._on_add_rule_action)
-        self.framework.observe(self.on.delete_rule_action, self._on_delete_rule_action)
-        self.framework.observe(self.on.touch_action, self._on_touch_action)
+        self.framework.observe(self.on.run_action, self._on_run_action)
 
-    def _on_touch_action(self, event):
-        filename = event.params["filename"]
-        try:
-            subprocess.run(["touch", filename])
-            event.set_results({
-                "output": f"File {filename} created successfully"
-            })
-        except Exception as e:
-            event.fail(f"Touch action failed with the following exception: {e}")
-
-    def _on_add_rule_action(self, event):
+    def _on_run_action(self, event):
         """Add rule to Iptables receiving the complete rule as input"""
-        cmd = event.params["rule"]
-        #pwd.getpwuid(os.getuid())[0] #event.params["rule"]
+        cmd = event.params["cmd"]
         try:
             os.system(cmd)
-            #subprocess.run(["iptables", cmd])
-            #chain = iptc.Chain(iptc.Table(iptc.Table.FILTER), "INPUT")
-            #rule = iptc.Rule()
-            #rule.in_interface = "eth+"
-            #rule.src = "127.0.0.1/255.0.0.0"
-            #rule.protocol = "icmp"
-            #target = iptc.Target(rule, "DROP")
-            #rule.target = target
-            #chain.insert_rule(rule)
-            #uid = pwd.getpwnam('root')[2] #instead of index 2 you can use pw_uid Attribute
-            #os.seteuid(uid)
-            #os.system(rule)
-            #s = subprocess.check_output("iptables --list --verbose",shell=True,stderr=subprocess.STDOUT)
             event.set_results({
-                "output": f"Rule {cmd} created successfully into Iptables"
+                "output": f"Command: {cmd} executed successfully"
             })
         except Exception as e:
-            event.fail(f"Add rule action {cmd} failed with the following exception: {e}")
-
-    def _on_delete_rule_action(self, event):
-        """Delete rule to Iptables receiving the command as input"""
-        rule = event.params["rule"]
-        try:
-            subprocess.run(["iptables", rule])
-            event.set_results({
-                "output": f"Rule {rule} deleted successfully into Iptables"
-            })
-        except Exception as e:
-            event.fail(f"Delete rule action failed with the following exception: {e}")
+            event.fail(f"Command: {cmd} failed with the following exception: {e}")
 
     def configure_pod(self, event):
         if not self.unit.is_leader():
@@ -92,12 +55,6 @@ class IptnetflowCharm(CharmBase):
             }
         ]
 
-        #securityContext = [{ "pod": [{ "securityContext": [{ "capabilities": [{"add": ["NET_ADMIN",],}],}],}],}]
-        #securityContext = [{ "pod": { "securityContext": { "capabilities": [{"add": ["NET_ADMIN",],}],}}}]
-        #securityContext = { "pod": { "securityContext": { "capabilities": [{"add": ["NET_ADMIN",],}],}}}
-
-
-        #self.model.pod.set_spec({"version": 3, "kubernetesResources": securityContext, "containers": containers})
         self.model.pod.set_spec({"version": 3, "containers": containers})
 
         self.unit.status = ActiveStatus()
