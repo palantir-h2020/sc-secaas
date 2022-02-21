@@ -22,6 +22,7 @@ class IptnetflowCharm(CharmBase):
 
         self.framework.observe(self.on.config_changed, self.configure_pod)
         self.framework.observe(self.on.run_action, self._on_run_action)
+        self.framework.observe(self.on.start_netflow_action, self._on_start_netflow_action)
 
     def _on_run_action(self, event):
         """Add rule to Iptables receiving the complete rule as input"""
@@ -33,6 +34,19 @@ class IptnetflowCharm(CharmBase):
             })
         except Exception as e:
             event.fail(f"Command: {cmd} failed with the following exception: {e}")
+
+    def _on_start_netflow_action(self, event):
+        """Add rule to Iptables receiving the complete rule as input"""
+        ip = event.params["ip"]
+        port = event.params["port"]
+        try:
+            os.system("service fprobe start")
+            os.system("fprobe -i eth0 " + ip + ":" + str(port))
+            event.set_results({
+                "output": f"NetFlow collector started for {ip}:{port} successfully"
+            })
+        except Exception as e:
+            event.fail(f"NetFlow collector failed with the following exception: {e}")
 
     def configure_pod(self, event):
         if not self.unit.is_leader():
