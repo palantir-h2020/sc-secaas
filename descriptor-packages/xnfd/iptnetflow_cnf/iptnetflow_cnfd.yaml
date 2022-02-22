@@ -22,19 +22,22 @@ vnfd:
           day1-2:
             - id: iptnetflow-kdu
               config-primitive:
-                - name: add-rule
+                - name: run
                   parameter:
                     - name: application-name
                       data-type: STRING
                       default-value: iptnetflow
-                    - name: rule
+                    - name: cmd
                       data-type: STRING
                       default-value: ""
-                - name: delete-url
+                - name: start-netflow
                   parameter:
                     - name: application-name
                       data-type: STRING
                       default-value: iptnetflow
-                    - name: rule
+                    - name: ip
                       data-type: STRING
+                      default-value: ""
+                    - name: port
+                      data-type: INTEGER
                       default-value: ""
