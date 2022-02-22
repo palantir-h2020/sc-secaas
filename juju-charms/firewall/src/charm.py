@@ -40,7 +40,7 @@ class IptnetflowCharm(CharmBase):
         ip = event.params["ip"]
         port = event.params["port"]
         try:
-            os.system("fprobe -i eth0 " + ip + ":" + str(port))
+            os.system("fprobe -i eth0 -s 10 -g 10 -d 10 -e " + ip + ":" + str(port))
             event.set_results({
                 "output": f"NetFlow collector started for {ip}:{port} successfully"
             })
