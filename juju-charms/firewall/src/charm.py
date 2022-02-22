@@ -59,7 +59,7 @@ class IptnetflowCharm(CharmBase):
                 "image": "lopeez97/iptnetflow:latest",
                 "ports": [
                     {
-                        "name": "squid",
+                        "name": "iptnetflow",
                         "containerPort": 22,
                         "protocol": "TCP",
                     }
