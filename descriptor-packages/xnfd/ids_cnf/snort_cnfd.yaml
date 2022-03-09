@@ -27,7 +27,7 @@ vnfd:
                   parameter:
                     - name: application-name
                       data-type: STRING
-                      value: squid
+                      value: snort
                     - name: filename
                       data-type: STRING
                       value: "/home/hello.txt"
@@ -36,23 +36,23 @@ vnfd:
                   parameter:
                     - name: application-name
                       data-type: STRING
-                      default-value: squid
+                      default-value: snort
                     - name: rule
                       data-type: STRING
                       default-value: ""
-                - name: delete-url
+                - name: run
                   parameter:
                     - name: application-name
                       data-type: STRING
-                      default-value: squid
-                    - name: rule
+                      default-value: snort
+                    - name: cmd
                       data-type: STRING
                       default-value: ""
                 - name: touch
                   parameter:
                     - name: application-name
                       data-type: STRING
-                      default-value: squid
+                      default-value: snort
                     - name: filename
                       data-type: STRING
                       default-value: ""

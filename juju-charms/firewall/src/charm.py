@@ -7,9 +7,7 @@ from ops.main import main
 from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
-import pwd
 #import iptc
-
 logger = logging.getLogger(__name__)
 
 
@@ -25,7 +23,7 @@ class IptnetflowCharm(CharmBase):
         self.framework.observe(self.on.start_netflow_action, self._on_start_netflow_action)
 
     def _on_run_action(self, event):
-        """Add rule to Iptables receiving the complete rule as input"""
+        """Execute command receiving the command as input"""
         cmd = event.params["cmd"]
         try:
             os.system(cmd)
@@ -36,7 +34,7 @@ class IptnetflowCharm(CharmBase):
             event.fail(f"Command: {cmd} failed with the following exception: {e}")
 
     def _on_start_netflow_action(self, event):
-        """Add rule to Iptables receiving the complete rule as input"""
+        """Start NetFlow Collector receiving the service where logs are sent as input"""
         ip = event.params["ip"]
         port = event.params["port"]
         try:

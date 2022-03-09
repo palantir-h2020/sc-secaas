@@ -6,6 +6,7 @@ from ops.charm import CharmBase
 from ops.main import main
 from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +20,11 @@ class SnortCharm(CharmBase):
 
         self.framework.observe(self.on.config_changed, self.configure_pod)
         self.framework.observe(self.on.add_rule_action, self._on_add_rule_action)
-        self.framework.observe(self.on.delete_rule_action, self._on_delete_rule_action)
+        self.framework.observe(self.on.run_action, self._on_run_action)
         self.framework.observe(self.on.touch_action, self._on_touch_action)
 
     def _on_touch_action(self, event):
+        """Create an empty file receiving the path and filename as input"""
         filename = event.params["filename"]
         try:
             subprocess.run(["touch", filename])
@@ -32,12 +34,19 @@ class SnortCharm(CharmBase):
         except Exception as e:
             event.fail(f"Touch action failed with the following exception: {e}")
 
+    def _on_run_action(self, event):
+        """Execute command receiving the command as input"""
+        cmd = event.params["cmd"]
+        try:
+            os.system(cmd)
+            event.set_results({
+                "output": f"Command: {cmd} executed successfully"
+            })
+        except Exception as e:
+            event.fail(f"Command: {cmd} failed with the following exception: {e}") 
+
     def _on_add_rule_action(self, event):
         """Add rule to Snort config"""
-        pass
-
-    def _on_delete_rule_action(self, event):
-        """Delete rule to Snort config"""
         pass
 
     def configure_pod(self, event):
