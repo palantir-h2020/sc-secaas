@@ -1,0 +1,25 @@
+name: suricata
+summary: Kubernetes operator for Suricata
+maintainers:
+    - Antonio López <antonio.lopez41@um.es>
+description: |
+    Suricata is the leading independent open source threat detection 
+    engine. By combining intrusion detection (IDS), intrusion prevention 
+    (IPS), network security monitoring (NSM) and PCAP processing, Suricata 
+    can quickly identify, stop, and assess even the most sophisticated attacks.
+tags:
+    - proxy
+    - firewall
+    - web
+series:
+    - kubernetes
+deployment:
+    service: loadbalancer
+resources:
+    image:
+        type: oci-image
+        description: Docker image for snort
+        upstream-source: "lopeez97/suricata:latest"
+#provides:
+#    prometheus-target:
+#        interface: http

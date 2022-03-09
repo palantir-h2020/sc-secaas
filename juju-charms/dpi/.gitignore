@@ -1,0 +1,10 @@
+venv
+.vscode
+build
+.coverage
+coverage.xml
+.stestr
+cover
+release
+__pycache__
+.tox

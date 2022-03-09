@@ -1,0 +1,23 @@
+run:
+    description: "Action to execute a command into container"
+    params:
+        cmd:
+            description: "Command to be executed"
+            type: string
+            default: ""
+    required:
+      - cmd
+add-rule:
+    description: "Add rule to Suricata config"
+    params:
+        rule:
+            description: "Rule to be added"
+            type: string
+            default: ""
+touch:
+    params:
+        filename:
+            description: Filename to the file that will be created - Full path
+            type: string
+    required:
+      - filename
