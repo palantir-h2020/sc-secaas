@@ -1,0 +1,58 @@
+vnfd:
+  product-name: suricata_cnf
+  version: "1.0"
+  provider: UMU
+  description: |
+    K8s container deployment of Suricata DPI for PALANTIR 
+  id: suricata_cnf
+  mgmt-cp: mgmtnet-ext
+  ext-cpd:
+    - id: mgmtnet-ext
+      k8s-cluster-net: mgmtnet
+  kdu:
+    - name: suricata-kdu
+      juju-bundle: bundle.yaml
+  k8s-cluster:
+    nets:
+      - id: mgmtnet
+  df:
+    - id: default-df
+      lcm-operations-configuration:
+        operate-vnf-op-config:
+          day1-2:
+            - id: suricata-kdu
+              initial-config-primitive:
+                - seq: 0
+                  name: touch
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      value: suricata
+                    - name: filename
+                      data-type: STRING
+                      value: "/home/hello.txt"
+              config-primitive:
+                - name: add-rule
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suticata
+                    - name: rule
+                      data-type: STRING
+                      default-value: ""
+                - name: run
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suricata
+                    - name: cmd
+                      data-type: STRING
+                      default-value: ""
+                - name: touch
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suricata
+                    - name: filename
+                      data-type: STRING
+                      default-value: ""
