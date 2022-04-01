@@ -1,1 +1,0 @@
-fc944c8ad7c3d672630b3612a44441c1	ids_ns/snort_cnf_nsd.yaml
