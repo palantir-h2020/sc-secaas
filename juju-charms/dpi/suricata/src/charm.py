@@ -57,15 +57,16 @@ class SnortCharm(CharmBase):
         containers = [
             {
                 "name": self.framework.model.app.name,
-                "image": "lopeez97/snort2:latest",
+                "image": "lopeez97/suricata:latest",
                 "ports": [
                     {
-                        "name": "squid",
+                        "name": "suricata",
                         "containerPort": 22,
                         "protocol": "TCP",
                     }
                 ],
                 "command": ["/bin/bash","-ce","tail -f /dev/null",],
+                "kubernetes": { "securityContext": { "privileged": True}}
             }
         ]
 

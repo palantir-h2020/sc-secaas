@@ -60,12 +60,13 @@ class SnortCharm(CharmBase):
                 "image": "lopeez97/snort2:latest",
                 "ports": [
                     {
-                        "name": "squid",
+                        "name": "snort2",
                         "containerPort": 22,
                         "protocol": "TCP",
                     }
                 ],
                 "command": ["/bin/bash","-ce","tail -f /dev/null",],
+                "kubernetes": { "securityContext": { "privileged": True}}
             }
         ]
 
