@@ -20,6 +20,8 @@ class SnortCharm(CharmBase):
 
         self.framework.observe(self.on.config_changed, self.configure_pod)
         self.framework.observe(self.on.add_rule_action, self._on_add_rule_action)
+        self.framework.observe(self.on.update_rules_action, self._on_update_rules_action)
+        self.framework.observe(self.on.start_service_action, self._on_start_service_action)
         self.framework.observe(self.on.run_action, self._on_run_action)
         self.framework.observe(self.on.touch_action, self._on_touch_action)
 
@@ -48,6 +50,26 @@ class SnortCharm(CharmBase):
     def _on_add_rule_action(self, event):
         """Add rule to Snort config"""
         pass
+
+    def _on_update_rules_action(self, event):
+        """Update default rules to Suricata config"""
+        try:
+            os.system("suricata-update")
+            event.set_results({
+                "output": f"Command: suricata-update executed successfully"
+            })
+        except Exception as e:
+            event.fail(f"Command: suricata-update failed with the following exception: {e}")
+
+    def _on_start_service_action(self, event):
+        """Start Suricata service"""
+        try:
+            os.system("service suricata restart")
+            event.set_results({
+                "output": f"Start: Suricata service started successfully"
+            })
+        except Exception as e:
+            event.fail(f"Start: Suricata service starting failed with the following exception: {e}")
 
     def configure_pod(self, event):
         if not self.unit.is_leader():

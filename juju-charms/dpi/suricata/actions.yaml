@@ -4,16 +4,20 @@ run:
         cmd:
             description: "Command to be executed"
             type: string
-            default: ""
     required:
       - cmd
+update_rules:
+    description: "Install the default rules"
+start_service:
+    description: "Start Suricata service"
 add-rule:
     description: "Add rule to Suricata config"
     params:
         rule:
             description: "Rule to be added"
             type: string
-            default: ""
+    required:
+       - rule
 touch:
     params:
         filename:
