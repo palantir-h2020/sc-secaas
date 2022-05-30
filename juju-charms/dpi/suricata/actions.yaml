@@ -6,9 +6,11 @@ run:
             type: string
     required:
       - cmd
-update_rules:
+health-check:
+    description: "Check if Suricata service is running"
+update-rules:
     description: "Install the default rules"
-start_service:
+start-service:
     description: "Start Suricata service"
 add-rule:
     description: "Add rule to Suricata config"

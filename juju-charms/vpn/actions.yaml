@@ -1,0 +1,23 @@
+run:
+    description: "Action to execute a command into container"
+    params:
+        cmd:
+            description: "Command to be executed"
+            type: string
+            default: ""
+    required:
+      - cmd
+start-netflow:
+    description: "Action to start NetFlow collection with fprobe"
+    params:
+        ip:
+            description: "IP address of NetFlow collector"
+            type: string
+            default: ""
+        port:
+            description: "Port of NetFlow collector"
+            type: integer
+            default: ""
+    required:
+      - ip
+      - port

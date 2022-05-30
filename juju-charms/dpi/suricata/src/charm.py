@@ -23,6 +23,7 @@ class SnortCharm(CharmBase):
         self.framework.observe(self.on.update_rules_action, self._on_update_rules_action)
         self.framework.observe(self.on.start_service_action, self._on_start_service_action)
         self.framework.observe(self.on.run_action, self._on_run_action)
+        self.framework.observe(self.on.health_check_action, self._on_health_check_action)
         self.framework.observe(self.on.touch_action, self._on_touch_action)
 
     def _on_touch_action(self, event):
@@ -47,8 +48,40 @@ class SnortCharm(CharmBase):
         except Exception as e:
             event.fail(f"Command: {cmd} failed with the following exception: {e}") 
 
+    def _on_health_check_action(self, event):
+        """Check if Suricata service is running"""
+        try:
+           child = subprocess.Popen('service suricata status',stdout=subprocess.PIPE)
+           msg,err = child.communicate()
+           print(msg)
+           output = msg.split(' ')
+           if "not" in output:
+                event.set_results({
+                     "output": f"Status: Suricata is not running"
+                })
+           else:
+                event.set_results({
+                     "output": f"Status: Suricata is running"
+                })
+#           for i in results:
+#                if i == "not":
+#                     event.set_results({
+#                          "output": f"Status: Suricata is not running"
+#                     })
+#                     break
+#                if i == "running":
+#                     event.set_results({
+#                          "output": f"Status: Suricata is running"
+#                     })
+#           event.set_results({
+#                "output": f"Command: suricata-update executed successfully"
+#            })
+        except Exception as e:
+           event.fail(f"Command: Health-check failed with the following exception: {e}")
+
+
     def _on_add_rule_action(self, event):
-        """Add rule to Snort config"""
+        """Add rule to Suricata config"""
         pass
 
     def _on_update_rules_action(self, event):

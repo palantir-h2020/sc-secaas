@@ -1,0 +1,26 @@
+name: openvpn
+summary: Kubernetes operator for OpenVPN 
+maintainers:
+    - Antonio López <antonio.lopez41@um.es>
+description: |
+    A Virtual Private Network (VPN) allows you to traverse untrusted 
+    networks as if you were on a private network. It gives you the 
+    freedom to access the internet safely and securely from your 
+    smartphone or laptop when connected to an untrusted network, like 
+    the WiFi at a hotel or coffee shop.
+tags:
+    - proxy
+    - vpn
+    - web
+series:
+    - kubernetes
+deployment:
+    service: loadbalancer
+resources:
+    image:
+        type: oci-image
+        description: Docker image for openvpn
+        upstream-source: "lopeez97/openvpn:latest"
+#provides:
+#    prometheus-target:
+#        interface: http
