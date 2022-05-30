@@ -7,17 +7,23 @@ run:
             default: ""
     required:
       - cmd
-start-netflow:
-    description: "Action to start NetFlow collection with fprobe"
+init-vpnconfig:
+    description: "Init VPN server config"
     params:
-        ip:
-            description: "IP address of NetFlow collector"
+        domain:
+            description: "Domain applied to the VPN server"
+            type: string
+            default: "vpn.sc.com"
+    required:
+      - domain
+start-vpn:
+    description: "Action to start NetFlow collection with fprobe"
+create-clientcert:
+    description: "Create and retrieve client cert"
+    params:
+        clientname:
+            description: "Client name assigned to the certificate"
             type: string
             default: ""
-        port:
-            description: "Port of NetFlow collector"
-            type: integer
-            default: ""
     required:
-      - ip
-      - port
+      - clientname
