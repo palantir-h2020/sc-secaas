@@ -12,6 +12,8 @@ update-rules:
     description: "Install the default rules"
 start-service:
     description: "Start Suricata service"
+stop-service:
+    description: "Stop Suricata service"
 add-rule:
     description: "Add rule to Suricata config"
     params:

@@ -11,7 +11,7 @@ import os
 logger = logging.getLogger(__name__)
 
 
-class SnortCharm(CharmBase):
+class SuricataCharm(CharmBase):
     """Class representing this Operator charm."""
 
     def __init__(self, *args):
@@ -22,6 +22,7 @@ class SnortCharm(CharmBase):
         self.framework.observe(self.on.add_rule_action, self._on_add_rule_action)
         self.framework.observe(self.on.update_rules_action, self._on_update_rules_action)
         self.framework.observe(self.on.start_service_action, self._on_start_service_action)
+        self.framework.observe(self.on.stop_service_action, self._on_stop_service_action)
         self.framework.observe(self.on.run_action, self._on_run_action)
         self.framework.observe(self.on.health_check_action, self._on_health_check_action)
         self.framework.observe(self.on.touch_action, self._on_touch_action)
@@ -51,10 +52,8 @@ class SnortCharm(CharmBase):
     def _on_health_check_action(self, event):
         """Check if Suricata service is running"""
         try:
-           child = subprocess.Popen('service suricata status',stdout=subprocess.PIPE)
-           msg,err = child.communicate()
-           print(msg)
-           output = msg.split(' ')
+           healthcheck = subprocess.run(["service","suricata","status"], check=True, capture_output=True, text=True)
+           output = healthcheck.stdout.split(' ')
            if "not" in output:
                 event.set_results({
                      "output": f"Status: Suricata is not running"
@@ -63,19 +62,7 @@ class SnortCharm(CharmBase):
                 event.set_results({
                      "output": f"Status: Suricata is running"
                 })
-#           for i in results:
-#                if i == "not":
-#                     event.set_results({
-#                          "output": f"Status: Suricata is not running"
-#                     })
-#                     break
-#                if i == "running":
-#                     event.set_results({
-#                          "output": f"Status: Suricata is running"
-#                     })
-#           event.set_results({
-#                "output": f"Command: suricata-update executed successfully"
-#            })
+
         except Exception as e:
            event.fail(f"Command: Health-check failed with the following exception: {e}")
 
@@ -97,12 +84,24 @@ class SnortCharm(CharmBase):
     def _on_start_service_action(self, event):
         """Start Suricata service"""
         try:
-            os.system("service suricata restart")
+            subprocess.run(["service","suricata","restart"], check=True, capture_output=True, text=True)
             event.set_results({
                 "output": f"Start: Suricata service started successfully"
             })
         except Exception as e:
             event.fail(f"Start: Suricata service starting failed with the following exception: {e}")
+
+
+    def _on_stop_service_action(self, event):
+        """Stop Suricata service"""
+        try:
+            subprocess.run(["service","suricata","stop"], check=True, capture_output=True, text=True)
+            event.set_results({
+                "output": f"Start: Suricata service stopped successfully"
+            })
+        except Exception as e:
+            event.fail(f"Start: Suricata service stopping failed with the following exception: {e}")
+
 
     def configure_pod(self, event):
         if not self.unit.is_leader():
@@ -133,4 +132,4 @@ class SnortCharm(CharmBase):
 
 
 if __name__ == "__main__":
-    main(SnortCharm)
+    main(SuricataCharm)
