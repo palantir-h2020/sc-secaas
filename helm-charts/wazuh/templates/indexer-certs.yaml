@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: indexer-certs
+  namespace: wazuh
+type: Opaque
+data:
+  root-ca.pem: # key base64 encoded
+  node.pem: # key base64 encoded
+  node-key.pem: # key base64 encoded
+  dashboard.pem: # key base64 encoded
+  admin.pem: # key base64 encoded
+  admin-key.pem: # key base64 encoded
+  filebeat.pem: # key base64 encoded
+  filebeat-key.pem: # key base64 encoded
