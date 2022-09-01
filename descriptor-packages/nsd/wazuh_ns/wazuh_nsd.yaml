@@ -1,1 +1,23 @@
-d6926b3bd99bc8c9c98ab23c70e67ef3	wazuh_ns/wazuh_nsd.yaml
+nsd:
+  nsd:
+  - description: NS with Wazuh xNF
+    designer: UMU
+    df:
+    - id: default-df
+      vnf-profile:
+      - id: wazuh_knf
+        virtual-link-connectivity:
+        - constituent-cpd-id:
+          - constituent-base-element-id: wazuh_knf
+            constituent-cpd-id: mgmt-ext
+          virtual-link-profile-id: mgmtnet
+        vnfd-id: wazuh_knf
+    id: wazuh_ns
+    name: wazuh_ns
+    version: '1.0'
+    virtual-link-desc:
+    - id: mgmtnet
+      mgmt-network: true
+    vnfd-id:
+    - wazuh_knf
+
