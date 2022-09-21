@@ -7,6 +7,14 @@ run:
             default: ""
     required:
       - cmd
+start-service:
+    description: "Start Snort service with default config"
+health-check:
+    description: "Check if Suricata service is running"
+update-rules:
+    description: "Install the community rules"
+stop-service:
+    description: "Stop Suricata service"
 add-rule:
     description: "Add rule to Snort config"
     params:

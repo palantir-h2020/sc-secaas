@@ -74,7 +74,7 @@ class SuricataCharm(CharmBase):
     def _on_update_rules_action(self, event):
         """Update default rules to Suricata config"""
         try:
-            os.system("suricata-update")
+            subprocess.run(["suricata-update"], check=True, capture_output=True, text=True)
             event.set_results({
                 "output": f"Command: suricata-update executed successfully"
             })

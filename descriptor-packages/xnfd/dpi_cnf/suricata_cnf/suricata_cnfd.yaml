@@ -56,3 +56,23 @@ vnfd:
                     - name: filename
                       data-type: STRING
                       default-value: ""
+                - name: health-check
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suricata
+                - name: update-rules
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suricata
+                - name: start-service
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suricata
+                - name: stop-service
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suricata

@@ -20,6 +20,10 @@ class SnortCharm(CharmBase):
 
         self.framework.observe(self.on.config_changed, self.configure_pod)
         self.framework.observe(self.on.add_rule_action, self._on_add_rule_action)
+        self.framework.observe(self.on.start_service_action, self._on_start_service_action)
+        self.framework.observe(self.on.update_rules_action, self._on_update_rules_action)
+        self.framework.observe(self.on.stop_service_action, self._on_stop_service_action)
+        self.framework.observe(self.on.health_check_action, self._on_health_check_action)
         self.framework.observe(self.on.run_action, self._on_run_action)
         self.framework.observe(self.on.touch_action, self._on_touch_action)
 
@@ -33,6 +37,58 @@ class SnortCharm(CharmBase):
             })
         except Exception as e:
             event.fail(f"Touch action failed with the following exception: {e}")
+
+    def _on_start_service_action(self, event):
+        """Start Snort service"""
+        """snort -i eth0 -c /etc/snort/etc/snort.conf -l /var/log/snort"""
+        try:
+            subprocess.run(["snort","-c","/etc/snort/etc/snort.conf","-l","/var/log/snort"], check=True, capture_output=True, text=True)
+            event.set_results({
+                "output": f"Start: Snort service started successfully"
+            })
+        except Exception as e:
+            event.fail(f"Start: Snort service starting failed with the following exception: {e}")
+
+    def _on_update_rules_action(self, event):
+        """Install community rules"""
+        try:
+            subprocess.run(["snort","-c","/etc/snort/etc/snort.conf","-l","/var/log/snort"], check=True, capture_output=True, text=True)
+            event.set_results({
+                "output": f"Update rules: Community rules installation successfully"
+            })
+        except Exception as e:
+            event.fail(f"Community rules: Installation failed with the following exception: {e}")
+
+    def _on_stop_service_action(self, event):
+        """Stop Snort service"""
+        try:
+            subprocess.run(["pgrep","snort"], check=True, capture_output=True, text=True)
+
+            if healthcheck.stdout:
+                subprocess.run(["kill","-9",healthcheck.stdout], check=True, capture_output=True, text=True)
+
+            event.set_results({
+                "output": f"Stop: Snort service stopped successfully"
+            })
+        except Exception as e:
+            event.fail(f"Stop: Snort service stopped failed with the following exception: {e}")
+
+    def _on_health_check_action(self, event):
+        """Stop Snort service"""
+        try:
+            subprocess.run(["pgrep","snort"], check=True, capture_output=True, text=True)
+
+            if healthcheck.stdout:
+                event.set_results({
+                    "output": f"Stop: Snort service is running"
+                })
+            else:
+                event.set_results({
+                    "output": f"Stop: Snort service is not running"
+                })
+
+        except Exception as e:
+            event.fail(f"Health-check: Health-check status failed with the following exception: {e}")
 
     def _on_run_action(self, event):
         """Execute command receiving the command as input"""
