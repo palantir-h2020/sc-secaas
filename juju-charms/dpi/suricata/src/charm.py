@@ -52,8 +52,8 @@ class SuricataCharm(CharmBase):
     def _on_health_check_action(self, event):
         """Check if Suricata service is running"""
         try:
-           healthcheck = subprocess.run(["service","suricata","status"], check=True, capture_output=True, text=True)
-           output = healthcheck.stdout.split(' ')
+           result = subprocess.run(["service","suricata","status"], check=True, capture_output=True, text=True)
+           output = result.stdout.split(' ')
            if "not" in output:
                 event.set_results({
                      "output": f"Status: Suricata is not running"

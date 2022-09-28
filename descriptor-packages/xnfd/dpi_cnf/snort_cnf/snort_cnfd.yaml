@@ -40,6 +40,16 @@ vnfd:
                     - name: rule
                       data-type: STRING
                       default-value: ""
+                - name: del-rule
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: snort
+                - name: health-check
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: snort
                 - name: run
                   parameter:
                     - name: application-name
@@ -48,11 +58,18 @@ vnfd:
                     - name: cmd
                       data-type: STRING
                       default-value: ""
-                - name: touch
+                - name: start-service
                   parameter:
                     - name: application-name
                       data-type: STRING
                       default-value: snort
-                    - name: filename
+                - name: stop-service
+                  parameter:
+                    - name: application-name
                       data-type: STRING
-                      default-value: ""
+                      default-value: snort
+                - name: start-configuration
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: snort

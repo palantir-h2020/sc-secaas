@@ -9,12 +9,12 @@ run:
       - cmd
 start-service:
     description: "Start Snort service with default config"
+start-configuration:
+    description: "Apply the initial configuration with home network ip range to Snort service"
 health-check:
-    description: "Check if Suricata service is running"
-update-rules:
-    description: "Install the community rules"
+    description: "Check if Snort service is running"
 stop-service:
-    description: "Stop Suricata service"
+    description: "Stop Snort service"
 add-rule:
     description: "Add rule to Snort config"
     params:
@@ -22,10 +22,5 @@ add-rule:
             description: "Rule to be added"
             type: string
             default: ""
-touch:
-    params:
-        filename:
-            description: Filename to the file that will be created - Full path
-            type: string
-    required:
-      - filename
+del-rule:
+    description: "Delete last rule inserted into Snort Service"
