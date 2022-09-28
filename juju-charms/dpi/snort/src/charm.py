@@ -8,7 +8,6 @@ from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
 import psutil
-import socket
 
 logger = logging.getLogger(__name__)
 
