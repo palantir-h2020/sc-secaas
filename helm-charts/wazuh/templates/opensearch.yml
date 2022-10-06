@@ -1,8 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: opensearch-conf
-  namespace: wazuh
+  name: {{ template "app.name" . }}-opensearch-conf
 data:
   # /var/ossec/etc-template/ossec.conf
   opensearch.yml: |-

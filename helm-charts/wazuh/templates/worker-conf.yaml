@@ -1,8 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: wazuh-manager-worker-conf
-  namespace: wazuh
+  name: {{ template "app.name" . }}-manager-worker-conf
 data:
   # /var/ossec/etc-template/ossec.conf
   worker.conf: |-

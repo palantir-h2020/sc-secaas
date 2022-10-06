@@ -10,24 +10,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ template "app.name" . }}-manager-worker
-  namespace: wazuh
+  name: wazuh-manager-worker
   labels:
-    app: {{ template "app.name" . }}-manager-worker
+    app: wazuh-manager-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ template "app.name" . }}-manager
+      app: wazuh-manager
       node-type: worker
   serviceName: wazuh-cluster
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
-        app: {{ template "app.name" . }}-manager
+        app: wazuh-manager
         node-type: worker
-      name: {{ template "app.name" . }}-manager-worker
+      name: wazuh-manager-worker
     spec:
       affinity:
         podAntiAffinity:
@@ -38,15 +37,15 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: wazuh-manager-worker-conf
+            name: {{ template "app.name" . }}-manager-worker-conf
         - name: filebeat-certs
           secret:
-            secretName: indexer-certs
+            secretName: {{ template "app.name" . }}-indexer-certs
       securityContext:
         fsGroup: 101
       containers:
         - name: wazuh-manager
-          image: 'wazuh/wazuh-manager:4.3.6'
+          image: 'lopeez97/wazuh-manager:4.3.8'
           resources:
             limits:
               cpu: 400m
@@ -110,17 +109,21 @@ spec:
             - containerPort: 1516
               name: cluster
           env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: INDEXER_URL
               value: 'https://wazuh-indexer-0.wazuh-indexer:9200'
             - name: INDEXER_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: indexer-cred
+                  name: {{ template "app.name" . }}-indexer-cred
                   key: username
             - name: INDEXER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: indexer-cred
+                  name: {{ template "app.name" . }}-indexer-cred
                   key: password
             - name: FILEBEAT_SSL_VERIFICATION_MODE
               value: 'full'
@@ -133,16 +136,16 @@ spec:
             - name: WAZUH_CLUSTER_KEY
               valueFrom:
                 secretKeyRef:
-                  name: wazuh-cluster-key
+                  name: {{ template "app.name" . }}-cluster-key
                   key: key
+          #command: [sed, -i, 's/<node>wazuh-manager-master-0.wazuh-cluster.wazuh<\/node>/<node>'"wazuh-manager-master-0.wazuh-cluster.'"${KUBERNETES_NAMESPACE}"'<\/node>/g', /var/ossec/etc/ossec.conf]
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-worker
-        namespace: wazuh
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: wazuh-storage
+        storageClassName: {{ template "app.name" . }}-storage
         resources:
           requests:
             storage: 500Mi

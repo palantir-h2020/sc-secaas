@@ -11,7 +11,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-manager-master
-  namespace: wazuh
 spec:
   replicas: 1
   selector:
@@ -30,18 +29,18 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: wazuh-manager-master-conf
+            name: {{ template "app.name" . }}-manager-master-conf
         - name: filebeat-certs
           secret:
-            secretName: indexer-certs
+            secretName: {{ template "app.name" . }}-indexer-certs
         - name: wazuh-authd-pass
           secret:
-            secretName: wazuh-authd-pass
+            secretName: {{ template "app.name" . }}-authd-pass
       securityContext:
         fsGroup: 101
       containers:
         - name: wazuh-manager
-          image: 'wazuh/wazuh-manager:4.3.6'
+          image: 'lopeez97/wazuh-manager:4.3.8'
           resources:
             limits:
               cpu: 400m
@@ -111,17 +110,21 @@ spec:
             - containerPort: 55000
               name: api
           env:
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             - name: INDEXER_URL
               value: 'https://wazuh-indexer-0.wazuh-indexer:9200'
             - name: INDEXER_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: indexer-cred
+                  name: {{ template "app.name" . }}-indexer-cred
                   key: username
             - name: INDEXER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: indexer-cred
+                  name: {{ template "app.name" . }}-indexer-cred
                   key: password
             - name: FILEBEAT_SSL_VERIFICATION_MODE
               value: 'full'
@@ -134,26 +137,25 @@ spec:
             - name: API_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: wazuh-api-cred
+                  name: {{ template "app.name" . }}-api-cred
                   key: username
             - name: API_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: wazuh-api-cred
+                  name: {{ template "app.name" . }}-api-cred
                   key: password
             - name: WAZUH_CLUSTER_KEY
               valueFrom:
                 secretKeyRef:
-                  name: wazuh-cluster-key
+                  name: {{ template "app.name" . }}-cluster-key
                   key: key
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-master
-        namespace: wazuh
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: wazuh-storage
+        storageClassName: {{ template "app.name" . }}-storage
         resources:
           requests:
             storage: 500Mi
