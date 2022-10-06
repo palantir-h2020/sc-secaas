@@ -32,6 +32,11 @@ vnfd:
                       data-type: STRING
                       value: "/home/hello.txt"
               config-primitive:
+                - name: del-rule
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: suricata
                 - name: add-rule
                   parameter:
                     - name: application-name
@@ -48,20 +53,12 @@ vnfd:
                     - name: cmd
                       data-type: STRING
                       default-value: ""
-                - name: touch
-                  parameter:
-                    - name: application-name
-                      data-type: STRING
-                      default-value: suricata
-                    - name: filename
-                      data-type: STRING
-                      default-value: ""
                 - name: health-check
                   parameter:
                     - name: application-name
                       data-type: STRING
                       default-value: suricata
-                - name: update-rules
+                - name: start-configuration
                   parameter:
                     - name: application-name
                       data-type: STRING

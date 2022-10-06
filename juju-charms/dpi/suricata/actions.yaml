@@ -8,24 +8,19 @@ run:
       - cmd
 health-check:
     description: "Check if Suricata service is running"
-update-rules:
-    description: "Install the default rules"
+start-configuration:
+    description: "Indicate the home network ip range for Suricata Service"
 start-service:
     description: "Start Suricata service"
 stop-service:
     description: "Stop Suricata service"
 add-rule:
-    description: "Add rule to Suricata config"
+    description: "Add rule to Suricata rules list"
     params:
         rule:
             description: "Rule to be added"
             type: string
     required:
        - rule
-touch:
-    params:
-        filename:
-            description: Filename to the file that will be created - Full path
-            type: string
-    required:
-      - filename
+del-rule:
+    description: "Delete last rule from Suricata rules list"

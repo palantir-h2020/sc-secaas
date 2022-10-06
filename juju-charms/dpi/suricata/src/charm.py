@@ -7,6 +7,7 @@ from ops.main import main
 from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
+import fileinput
 
 logger = logging.getLogger(__name__)
 
@@ -20,23 +21,63 @@ class SuricataCharm(CharmBase):
 
         self.framework.observe(self.on.config_changed, self.configure_pod)
         self.framework.observe(self.on.add_rule_action, self._on_add_rule_action)
-        self.framework.observe(self.on.update_rules_action, self._on_update_rules_action)
+        self.framework.observe(self.on.del_rule_action, self._on_del_rule_action)
         self.framework.observe(self.on.start_service_action, self._on_start_service_action)
         self.framework.observe(self.on.stop_service_action, self._on_stop_service_action)
         self.framework.observe(self.on.run_action, self._on_run_action)
         self.framework.observe(self.on.health_check_action, self._on_health_check_action)
-        self.framework.observe(self.on.touch_action, self._on_touch_action)
+        self.framework.observe(self.on.start_configuration_action, self._on_start_configuration_action)
 
-    def _on_touch_action(self, event):
-        """Create an empty file receiving the path and filename as input"""
-        filename = event.params["filename"]
+
+    def _on_start_configuration_action(self, event):
+        """Configure Snort service"""
         try:
-            subprocess.run(["touch", filename])
+            result = subprocess.run(["hostname","-I"], check=True, capture_output=True, text=True)
+            output = result.stdout.split(' ')
+            output.pop(-1)
+
+            index = 0
+            for value in output:
+                if "f" in value:
+                    output.pop(index)
+                else:
+                    ipaddress = value.split('.')
+                    output[index] = ipaddress[0] + "." + ipaddress[1] + "." + ipaddress[2] + "." + "0" + "/24"
+                index += 1
+
+            line = "%YAML 1.1\n" + "---\n\n" + "vars:\n" + "  address-groups:\n"  + "    HOME_NET: \"[" + ",".join(str(x) for x in output) + "]\""
+            with open("/etc/suricata/suricata.yaml", "r+") as f:
+                content = f.read()
+                with open("/etc/suricata/suricata.yaml", "w+") as f:
+                    f.write(line + '\n' + content)
+
+            result = subprocess.run(["ls","/sys/class/net"], check=True, capture_output=True, text=True)
+            output = result.stdout.split('\n')
+            interface = ""
+
+            for value in output:
+                if ("ens" in value) or ("eth" in value):
+                    interface = value
+
+            change = False
+            with fileinput.FileInput("/etc/suricata/suricata.yaml", inplace = True, backup ='.bak') as f:
+                for line in f:
+                    if("af-packet:\n" == line):
+                        change = True
+                        print(line, end ='')
+                        continue
+                    elif (change == True):
+                        print("  - interface: " + interface, end ='\n')
+                        change = False
+                    else:
+                        print(line, end ='')
+
             event.set_results({
-                "output": f"File {filename} created successfully"
+                "output": f"Start-configuration: Suricata service configured correctly"
             })
         except Exception as e:
-            event.fail(f"Touch action failed with the following exception: {e}")
+            event.fail(f"Start-configuration: Suricata service configuration failed with the following exception: {e}")
+
 
     def _on_run_action(self, event):
         """Execute command receiving the command as input"""
@@ -48,6 +89,7 @@ class SuricataCharm(CharmBase):
             })
         except Exception as e:
             event.fail(f"Command: {cmd} failed with the following exception: {e}") 
+
 
     def _on_health_check_action(self, event):
         """Check if Suricata service is running"""
@@ -69,17 +111,34 @@ class SuricataCharm(CharmBase):
 
     def _on_add_rule_action(self, event):
         """Add rule to Suricata config"""
-        pass
-
-    def _on_update_rules_action(self, event):
-        """Update default rules to Suricata config"""
+        line = event.params["rule"]
         try:
-            subprocess.run(["suricata-update"], check=True, capture_output=True, text=True)
+            with open("/etc/suricata/rules/local.rules", "r+") as f:
+                content = f.read()
+                with open("/etc/suricata/rules/local.rules", "w+") as f:
+                    f.write(line + '\n' + content)
+
             event.set_results({
-                "output": f"Command: suricata-update executed successfully"
+                "output": f"Add-rule: New rule inserted successfully"
             })
         except Exception as e:
-            event.fail(f"Command: suricata-update failed with the following exception: {e}")
+            event.fail(f"Add-rule: Add-rule failed with the following exception: {e}")
+
+
+    def _on_del_rule_action(self, event):
+        """Delete last rule to Suricata config"""
+        try:
+            with open("/etc/suricata/rules/local.rules", "r+") as f:
+                content = f.read().splitlines(True)
+                with open("/etc/suricata/rules/local.rules", "w+") as f:
+                    f.writelines(content[1:])
+
+            event.set_results({
+                "output": f"Del-rule: Last rule removed successfully"
+            })
+        except Exception as e:
+            event.fail(f"Del-rule: Del-rule failed with the following exception: {e}")
+
 
     def _on_start_service_action(self, event):
         """Start Suricata service"""
@@ -124,7 +183,9 @@ class SuricataCharm(CharmBase):
             }
         ]
 
-        self.model.pod.set_spec({"version": 3, "containers": containers})
+        kubernetesResources = {"pod": {"hostNetwork": True}}
+
+        self.model.pod.set_spec({"version": 3, "containers": containers, "kubernetesResources": kubernetesResources})
 
         self.unit.status = ActiveStatus()
         self.app.status = ActiveStatus()
