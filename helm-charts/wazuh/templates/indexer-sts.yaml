@@ -11,7 +11,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-indexer
-  namespace: wazuh
 spec:
   replicas: 1
   selector:
@@ -28,13 +27,13 @@ spec:
       volumes:
         - name: indexer-certs
           secret:
-            secretName: indexer-certs
+            secretName: {{ template "app.name" . }}-indexer-certs
         - name: config
           configMap:
-            name: opensearch-conf
+            name: {{ template "app.name" . }}-opensearch-conf
         - name: users-conf
           configMap:
-            name: internal-users-conf
+            name: {{ template "app.name" . }}-internal-users-conf
       initContainers:
         - name: volume-mount-hack
           image: busybox
@@ -62,7 +61,7 @@ spec:
             privileged: true
       containers:
         - name: wazuh-indexer
-          image: 'wazuh/wazuh-indexer:4.3.6'
+          image: 'wazuh/wazuh-indexer:4.3.8'
           resources:
             limits:
               cpu: 500m
@@ -128,11 +127,10 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: wazuh-indexer
-        namespace: indexer-cluster
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: wazuh-storage
+        storageClassName: {{ template "app.name" . }}-storage
         resources:
           requests:
             storage: 500Mi

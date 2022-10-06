@@ -1,8 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: internal-users-conf
-  namespace: wazuh
+  name: {{ template "app.name" . }}-internal-users-conf
 data:
   # /var/ossec/etc-template/ossec.conf
   internal_users.yml: |-
