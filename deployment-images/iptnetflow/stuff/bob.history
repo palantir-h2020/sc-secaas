@@ -1,0 +1,14 @@
+    1  ls
+    2  apt update
+    3  apt install route
+    4  apt install iproute2
+    5  ls
+    6  ip route
+    7  ip route add 10.0.10.0/24 via 10.0.20.2 dev eth0
+    8  ping 10.0.10.2
+    9  ping 10.0.10.3
+   10  apt install iputils-ping
+   11  ping 10.0.10.3
+   12  ping 10.0.20.3
+   13  ping 10.0.10.3
+   14  history > bob.history

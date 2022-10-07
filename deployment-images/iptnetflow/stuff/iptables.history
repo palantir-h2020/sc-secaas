@@ -1,0 +1,159 @@
+    1  ls
+    2  ip route
+    3  apt install iproute2
+    4  apt update
+    5  apt install iproute2
+    6  ip routes
+    7  ip route
+    8  iptables
+    9  apt install iptables
+   10  iptables --list
+   11  iptables -I FORWARD -p icmp --icmp-type 8 -j DROP
+   12  iptables --list
+   13  iptables -D FORWARD -p icmp --icmp-type 8 -j DROP
+   14  iptables --list
+   15  iptables -D FORWARD -p icmp --icmp-type 8 -j DROP
+   16  iptables -A FORWARD -p icmp --icmp-type 8 -j DROP
+   17  iptables -D FORWARD -p icmp --icmp-type 8 -j DROP
+   18  iptables -D FORWARD -p icmp --icmp-type 8 -s 10.0.10.3 -j DROP
+   19  iptables -A FORWARD -p icmp --icmp-type 8 -s 10.0.10.3 -j DROP
+   20  iptables -D FORWARD -p icmp --icmp-type 8 -s 10.0.10.3 -j DROP
+   21  iptables -A FORWARD -p icmp --icmp-type 8 -s 10.0.20.3 -j DROP
+   22  iptables -D FORWARD -p icmp --icmp-type 8 -s 10.0.20.3 -j DROP
+   23  iptables -A FORWARD -p icmp --icmp-type 8 -s 10.0.20.3 -j DROP
+   24  iptables -D FORWARD -p icmp --icmp-type 8 -s 10.0.20.3 -j DROP
+   25  apt-get install -y  fprobe 
+   26  ls
+   27  ip route
+   28  ping 10.0.30.3
+   29  sudo apt install iputils-ping
+   30  apt install iputils-ping
+   31  fg
+   32  apt install iputils-ping
+   33  ping 10.0.30.3
+   34  apt-get install -y  fprobe 
+   35  systemctl is-enabled fprobe.service
+   36  servie
+   37  service
+   38  service fprobe
+   39  service fprobe status
+   40  service --status-all
+   41  service fprobe 
+   42  service fprobe restart
+   43  service --status-all
+   44  service fprobe status
+   45  nestat -anpl
+   46  netstat -anpl
+   47  nano /etc/default/fprobe 
+   48  cat /etc/default/fprobe 
+   49  iptables
+   50  iptables --list
+   51  iptables -A FORWARD -p icmp --icmp-type 8 -s 10.0.10.3 -j DROP
+   52  iptables -D FORWARD -p icmp --icmp-type 8 -s 10.0.10.3 -j DROP
+   53  apt remove fprobe
+   54  capsh --print
+   55  service --status-all
+   56  service fprobe
+   57  service fprobe status
+   58  service fprobe remove
+   59  ip route
+   60  service
+   61  apt install fprobe
+   62  service --status-all
+   63  printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
+   64  service --status-all
+   65  service fprobe restart
+   66  service --status-all
+   67  apt remove fprobe
+   68  service --status-all
+   69  systemctl
+   70  ls
+   71  apt install nano
+   72  nano /etc/default/fprobe `
+   73  nano /etc/default/fprobe 
+   74  apt install fprobe
+   75  fprobe
+   76  fprobe -i
+   77  fprobe -i eth0 10.0.30.3:12345
+   78  ps aux
+   79  service fprobe stop
+   80  ps aux
+   81  service fprobe start
+   82  ps aux
+   83  service fprobe stop
+   84  service --status
+   85  service --status-all
+   86  service fprobe stop
+   87  service --status-all
+   88  ps aux
+   89  service fprobe start
+   90  ps au 
+   91  ps aux
+   92  fprobe stop
+   93  service fprobe stop
+   94  ps aux
+   95  service fprobe start
+   96  ps aux
+   97  iptables
+   98  iptables --list
+   99  dpkg
+  100  cat /var/log/alternatives.log 
+  101  iptables -A FORWARD -j LOG
+  102  iptables
+  103  iptables --list
+  104  cat /var/log/kern.log
+  105  cat /etc/syslog.conf
+  106  nano /etc/syslog.conf
+  107  service rsyslog restart
+  108  nano /etc/syslog.conf
+  109  rm /etc/syslog.conf
+  110  iptables -D FORWARD -j LOG
+  111  iptables -A FORWARD -j LOG
+  112  cat /proc/sys/net/netfilter/nf_log/0 
+  113  cat /proc/sys/net/netfilter/nf_log/1
+  114  cat /proc/sys/net/netfilter/nf_log/2
+  115  cat /proc/sys/net/netfilter/nf_log/3
+  116  cat /proc/sys/net/netfilter/nf_log/4
+  117  cat /proc/sys/net/netfilter/nf_log/5
+  118  cat /proc/sys/net/netfilter/nf_log/6
+  119  cat /proc/sys/net/netfilter/nf_log/10
+  120  cat /proc/sys/net/netfilter/nf_log/9
+  121  file /proc/sys/net/netfilter/nf_log/10
+  122* 
+  123  iptables -D FORWARD -j LOG
+  124  iptables -A FORWARD -j LOG --log-level debug --log-prefix "FORWARDED packets"
+  125  iptables --list
+  126  find /var/log -mmin 1
+  127  ip netns list
+  128  ls /proc/net/netfilter/nf_log 
+  129  cat /proc/net/netfilter/nf_log 
+  130  cat /proc/net/netfilter
+  131  ls /proc/1040/ns 
+  132  ls /proc/1040/ns -la
+  133  iptables
+  134  iptables --list
+  135  iptables -d FORWARD -j LOG --log-level debug --log-prefix "FORWARDED packets"
+  136  iptables -D FORWARD -j LOG --log-level debug --log-prefix "FORWARDED packets"
+  137  apt install ulogd
+  138  apt search ulogd
+  139  apt search ulogd2
+  140  apt install ulogd2
+  141  nano /etc/ulogd.conf
+  142  ulogd -d
+  143  cat /var/log/ulogd.log
+  144  cat /var/log/ulog/syslogemu.log 
+  145  ps aux
+  146  kill -9 1231
+  147  nano /etc/ulogd.conf
+  148  ulogd -d
+  149  cat /var/log/ulogd.log
+  150  cat /var/log/ulog/syslogemu.log 
+  151  iptables -A FORWARD -j NFLOG --nflog-prefix "[default-drop]:" --nflog-group 1
+  152  cat /var/log/ulog/syslogemu.log 
+  153  iptables -D FORWARD -j NFLOG --nflog-prefix "[default-drop]:" --nflog-group 1
+  154  cat /var/log/ulog/syslogemu.log 
+  155  history | grep apt
+  156  history
+  157  history | grep nano
+  158  cat iptables.history
+  159  history > iptables.history

@@ -1,0 +1,137 @@
+# Kafka https://kafka.apache.org/quickstart
+
+version: "3.7"
+services:
+    zookeeper:
+        restart: always
+        hostname: zookeeper
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+        networks:
+            nat30:
+                ipv4_address: 10.0.30.5
+        #logging:
+        #    driver: "none"
+
+    kafka:
+        restart: always
+        image: wurstmeister/kafka
+        hostname: kafka
+        environment:
+            #DOCKER_API_VERSION: 1.22
+            KAFKA_ADVERTISED_HOST_NAME: kafka
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        networks:
+            nat30:
+                ipv4_address: 10.0.30.6
+        #logging:
+        #    driver: "none"
+        depends_on:
+        - zookeeper
+        #command: "kafka-topics.sh --create --topic quickstart-events --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1"
+        #command: "kafka-console-consumer.sh --topic snort --from-beginning --bootstrap-server localhost:9092"
+
+    alice:
+       restart: always
+       build: host
+       hostname: alice
+       stdin_open: true
+       tty: true
+       networks:
+           # eth0
+           nat10:
+               ipv4_address: 10.0.10.3
+       depends_on:
+           - iptables
+       cap_add:
+           - net_admin
+       #command: "bash alice.sh"
+       #ip route add 10.0.20.0/24 via 10.0.10.2 dev eth0
+       command: sh -c "ip route add 10.0.20.0/24 via 10.0.10.2 dev eth0 && exec ping 10.0.20.3"
+
+    bob:
+       restart: always
+       build: host
+       hostname: bob
+       stdin_open: true
+       tty: true
+       networks:
+           # eth0
+           nat20:
+               ipv4_address: 10.0.20.3
+       depends_on:
+           - iptables
+       cap_add:
+           - net_admin
+       #command: "bash bob.sh"
+       #ip route add 10.0.10.0/24 via 10.0.20.2 dev eth0
+       command: sh -c "ip route add 10.0.10.0/24 via 10.0.20.2 dev eth0 && exec ping 10.0.10.3"
+
+    iptables:
+        restart: always
+        build: iptables
+        hostname: iptables
+        stdin_open: true
+        tty: true
+        networks:
+            # eth0
+            nat10:
+                ipv4_address: 10.0.10.2
+            # eth1
+            nat20:
+                ipv4_address: 10.0.20.2
+            # eth2
+            nat30:
+                ipv4_address: 10.0.30.2
+        #command: "bash iptables.sh"
+        #command: "fprobe -g 10 -d 10 -e 10 -v 7 -l 2 -i eth0 10.0.30.3:12345"
+        command: "bash"
+        privileged: true
+        cap_add:
+            - net_admin
+        depends_on:
+        - kafka
+
+    collector:
+       restart: always
+       build: collector
+       hostname: collector
+       stdin_open: true
+       tty: true
+       networks:
+           # eth0
+           nat30:
+               ipv4_address: 10.0.30.3
+       depends_on:
+           - iptables
+       command: bash
+       privileged: true
+       #command: "bash collector.sh"
+       #command: "nfcapd -p 12345 -l flows -t 10"
+
+#volumes:
+#    logvolume01: {}
+#    sitevolume: {}
+#    databasevolume: {}
+
+networks:
+
+    nat10:
+        internal: false
+        name: nat10
+        ipam:
+            config:
+                - subnet: "10.0.10.0/24"
+    nat20:
+        internal: false
+        name: nat20
+        ipam:
+            config:
+                - subnet: "10.0.20.0/24"
+    nat30:
+        internal: false
+        name: nat30
+        ipam:
+            config:
+                - subnet: "10.0.30.0/24"

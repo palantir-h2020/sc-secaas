@@ -1,0 +1,21 @@
+    1  ls
+    2  nfcapd -p 12345 -l flows -t 60
+    3  cd ~
+    4  nfcapd -p 12345 -l flows -t 60
+    5  mkdir flows
+    6  nfcapd -p 12345 -l flows -t 60
+    7  ps aux
+    8  ls
+    9  cd flows
+   10  ls
+   11  cat nfcapd.current.14 
+   12  ls
+   13  ls -all
+   14  fg
+   15  ls
+   16  ls -all
+   17  cat nfcapd.202201311734
+   18  cat nfcapd.202201311735
+   19  nfdump -r nfcapd.202201311734 -o extended
+   20  nfdump -r nfcapd.202201311735 -o extended
+   21  history > collector.history

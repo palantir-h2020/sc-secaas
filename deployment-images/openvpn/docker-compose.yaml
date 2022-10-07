@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  secaas_vpn:
+        restart: always
+        build: openvpn
+        hostname: openvpn
+        stdin_open: true
+        tty: true
+        ports:
+            - "1194:1194/udp"
+        command: "bash"
+        cap_add:
+            - net_admin
