@@ -56,7 +56,7 @@ class SuricataCharm(CharmBase):
             interface = ""
 
             for value in output:
-                if ("ens" in value) or ("eth" in value):
+                if (("ens" in value) or ("eth" in value) or ("eno" in value)) and (len(value) < 6):
                     interface = value
 
             change = False
