@@ -23,14 +23,11 @@ vnfd:
             - id: snort-kdu
               initial-config-primitive:
                 - seq: 0
-                  name: touch
+                  name: start-configuration
                   parameter:
                     - name: application-name
                       data-type: STRING
                       value: snort
-                    - name: filename
-                      data-type: STRING
-                      value: "/home/hello.txt"
               config-primitive:
                 - name: add-rule
                   parameter:
