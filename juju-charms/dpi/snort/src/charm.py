@@ -39,7 +39,15 @@ class SnortCharm(CharmBase):
                     })
                     return
 
-            subprocess.Popen(['snort', '-D', '-c', '/etc/snort/etc/snort.conf', '-l', '/var/log/snort'])
+            result = subprocess.run(["ls","/sys/class/net"], check=True, capture_output=True, text=True)
+            output = result.stdout.split('\n')
+
+            interface = "null"
+            for value in output:
+                if (("ens" in value) or ("eth" in value) or ("eno" in value)) and (len(value) < 6):
+                    interface = value
+
+            subprocess.Popen(['snort', '-D', '-i', interface, '-c', '/etc/snort/etc/snort.conf', '-l', '/var/log/snort'])
             event.set_results({
                 "output": f"Start: Snort service started successfully"
             })
@@ -176,7 +184,9 @@ class SnortCharm(CharmBase):
             }
         ]
 
-        self.model.pod.set_spec({"version": 3, "containers": containers})
+        kubernetesResources = {"pod": {"hostNetwork": True}}
+
+        self.model.pod.set_spec({"version": 3, "containers": containers, "kubernetesResources": kubernetesResources})
 
         self.unit.status = ActiveStatus()
         self.app.status = ActiveStatus()
