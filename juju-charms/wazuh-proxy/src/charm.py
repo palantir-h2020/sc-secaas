@@ -13,7 +13,7 @@ import psutil
 logger = logging.getLogger(__name__)
 
 
-class SnortCharm(CharmBase):
+class WazuhproxyCharm(CharmBase):
     """Class representing this Operator charm."""
 
     def __init__(self, *args):
@@ -90,6 +90,9 @@ class SnortCharm(CharmBase):
     def _on_stop_service_action(self, event):
         """Stop Snort service"""
         try:
+            openldap_service = self.osm_config.k8s.get_service("wazuh-proxy")
+            openldap_ip = openldap_service.ip
+            openldap_port = openldap_service.get_port("snort2")
             for process in psutil.process_iter():
                 if "snort" in process.name() and "zombie" not in process.status():
                     process.kill()
@@ -197,4 +200,4 @@ class SnortCharm(CharmBase):
 
 
 if __name__ == "__main__":
-    main(SnortCharm)
+    main(WazuhproxyCharm)
