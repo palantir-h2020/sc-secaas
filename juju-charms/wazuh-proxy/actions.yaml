@@ -1,26 +1,13 @@
-run:
-    description: "Action to execute a command into container"
+list-k8s-services:
+    description: "List k8s services"
+execute-command:
+    description: "Execute command into another pod"
     params:
-        cmd:
-            description: "Command to be executed"
+        command:
+            description: "Command to execute"
             type: string
             default: ""
-    required:
-      - cmd
-start-service:
-    description: "Start Snort service with default config"
-start-configuration:
-    description: "Apply the initial configuration with home network ip range to Snort service"
-health-check:
-    description: "Check if Snort service is running"
-stop-service:
-    description: "Stop Snort service"
-add-rule:
-    description: "Add rule to Snort config"
-    params:
-        rule:
-            description: "Rule to be added"
+        name:
+            description: "Name of container"
             type: string
             default: ""
-del-rule:
-    description: "Delete last rule inserted into Snort Service"
