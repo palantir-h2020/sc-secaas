@@ -1,0 +1,2 @@
+-a exit,always -F euid=1000 -F arch=b32 -S execve -k audit-wazuh-c
+-a exit,always -F euid=1000 -F arch=b64 -S execve -k audit-wazuh-c
