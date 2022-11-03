@@ -1,0 +1,23 @@
+nsd:
+  nsd:
+  - description: NS with Wazuh xNF
+    designer: UMU
+    df:
+    - id: default-df
+      vnf-profile:
+      - id: wazuhproxy_knf
+        virtual-link-connectivity:
+        - constituent-cpd-id:
+          - constituent-base-element-id: wazuhproxy_knf
+            constituent-cpd-id: mgmt-ext
+          virtual-link-profile-id: mgmtnet
+        vnfd-id: wazuhproxy_knf
+    id: wazuhproxy_ns
+    name: wazuhproxy_ns
+    version: '1.0'
+    virtual-link-desc:
+    - id: mgmtnet
+      mgmt-network: true
+    vnfd-id:
+    - wazuhproxy_knf
+
