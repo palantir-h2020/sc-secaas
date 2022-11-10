@@ -183,9 +183,9 @@ class SuricataCharm(CharmBase):
             }
         ]
 
-        kubernetesResources = {"pod": {"hostNetwork": True}}
+#        kubernetesResources = {"pod": {"hostNetwork": True}}
 
-        self.model.pod.set_spec({"version": 3, "containers": containers, "kubernetesResources": kubernetesResources})
+        self.model.pod.set_spec({"version": 3, "containers": containers}) #, "kubernetesResources": kubernetesResources})
 
         self.unit.status = ActiveStatus()
         self.app.status = ActiveStatus()
