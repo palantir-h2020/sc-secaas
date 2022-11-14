@@ -1,0 +1,21 @@
+description: Iptnetflow Bundle
+bundle: kubernetes
+applications:
+  iptnetflow:
+    charm: ./wazuhproxy_ubuntu-20.04-amd64.charm
+    scale: 1
+#    resources:
+#      iptnetflow-image: lopeez97/iptnetflow:latest
+  #  options:
+  #    enable-exporter: true
+  # prometheus:
+  #   charm: ./charms/prometheus-operator
+  #   scale: 1
+  # grafana:
+  #   charm: ./charms/grafana-operator
+  #   scale: 1
+# relations:
+# - - prometheus:target
+#   - squid:prometheus-target
+# - - grafana:grafana-source
+#   - prometheus:grafana-source

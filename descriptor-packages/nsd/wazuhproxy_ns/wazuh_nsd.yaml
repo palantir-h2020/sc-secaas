@@ -5,13 +5,13 @@ nsd:
     df:
     - id: default-df
       vnf-profile:
-      - id: wazuhproxy_knf
+      - id: wazuh-proxy_knf
         virtual-link-connectivity:
         - constituent-cpd-id:
           - constituent-base-element-id: wazuhproxy_knf
             constituent-cpd-id: mgmt-ext
           virtual-link-profile-id: mgmtnet
-        vnfd-id: wazuhproxy_knf
+        vnfd-id: wazuh-proxy_knf
     id: wazuhproxy_ns
     name: wazuhproxy_ns
     version: '1.0'
@@ -19,5 +19,5 @@ nsd:
     - id: mgmtnet
       mgmt-network: true
     vnfd-id:
-    - wazuhproxy_knf
+    - wazuh-proxy_knf
 

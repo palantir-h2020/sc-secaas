@@ -1,10 +1,10 @@
 vnfd:
-  product-name: iptnetflow_cnf
+  product-name: iptnetflowv2_cnf
   version: "1.0"
   provider: UMU
   description: |
     K8s container deployment of iptables + NetFlow collector ids for PALANTIR 
-  id: iptnetflow_cnf
+  id: iptnetflowv2_cnf
   mgmt-cp: mgmtnet-ext
   ext-cpd:
     - id: mgmtnet-ext

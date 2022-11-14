@@ -1,7 +1,5 @@
 name: wazuhproxy
 summary: Kubernetes operator for Snort
-maintainers:
-    - Antonio López <antonio.lopez41@um.es>
 description: |
     Snort is the foremost Open Source Intrusion Prevention System (IPS)
     in the world. Snort IPS uses a series of rules that help define malicious
@@ -11,8 +9,8 @@ description: |
 #    - proxy
 #    - firewall
 #    - web
-#series:
-#    - kubernetes
+series:
+    - kubernetes
 #deployment:
 #    service: loadbalancer
 #resources:

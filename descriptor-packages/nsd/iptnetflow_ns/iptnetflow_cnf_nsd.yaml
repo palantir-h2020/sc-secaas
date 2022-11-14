@@ -5,19 +5,19 @@ nsd:
     df:
     - id: default-df
       vnf-profile:
-      - id: iptnetflow_cnf
+      - id: iptnetflowv2_cnf
         virtual-link-connectivity:
         - constituent-cpd-id:
           - constituent-base-element-id: snort_cnf
             constituent-cpd-id: mgmtnet-ext
           virtual-link-profile-id: mgmtnet
-        vnfd-id: iptnetflow_cnf
-    id: iptnetflow_cnf_ns
-    name: iptnetflow_cnf_ns
+        vnfd-id: iptnetflowv2_cnf
+    id: iptnetflowv2_cnf_ns
+    name: iptnetflowv2_cnf_ns
     version: '1.0'
     virtual-link-desc:
     - id: mgmtnet
       mgmt-network: true
       vim-network-name: mgmt
     vnfd-id:
-    - iptnetflow_cnf
+    - iptnetflowv2_cnf

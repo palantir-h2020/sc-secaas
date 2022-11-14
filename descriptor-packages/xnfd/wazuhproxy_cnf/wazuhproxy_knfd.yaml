@@ -9,8 +9,8 @@ vnfd:
             execution-environment-list:
             - id: wazuh-proxy
               juju:
-#                charm: wazuh-proxy
-                charm: wazuhproxy_ubuntu-20.04-amd64.charm
+                charm: wazuh-proxy
+#                charm: wazuhproxy_ubuntu-20.04-amd64.charm
 #                proxy: true
                 cloud: k8s
             config-primitive:

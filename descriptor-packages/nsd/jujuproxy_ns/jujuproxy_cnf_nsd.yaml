@@ -1,0 +1,23 @@
+nsd:
+  nsd:
+  - description: NS with 1 KDU connected to the mgmtnet VL
+    designer: UMU
+    df:
+    - id: default-df
+      vnf-profile:
+      - id: jujuproxy_cnf
+        virtual-link-connectivity:
+        - constituent-cpd-id:
+          - constituent-base-element-id: snort_cnf
+            constituent-cpd-id: mgmtnet-ext
+          virtual-link-profile-id: mgmtnet
+        vnfd-id: jujuproxy_cnf
+    id: jujuproxy_ns
+    name: jujuproxy_ns
+    version: '1.0'
+    virtual-link-desc:
+    - id: mgmtnet
+      mgmt-network: true
+      vim-network-name: mgmt
+    vnfd-id:
+    - jujuproxy_cnf

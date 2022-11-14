@@ -1,0 +1,37 @@
+vnfd:
+  product-name: jujuproxy_cnf
+  version: "1.0"
+  provider: UMU
+  description: |
+    K8s container deployment of Wazuh proxy charm for PALANTIR 
+  id: jujuproxy_cnf
+  mgmt-cp: mgmtnet-ext
+  ext-cpd:
+    - id: mgmtnet-ext
+      k8s-cluster-net: mgmtnet
+  kdu:
+    - name: jujuproxy-kdu
+      juju-bundle: bundle.yaml
+  k8s-cluster:
+    nets:
+      - id: mgmtnet
+  df:
+    - id: default-df
+      lcm-operations-configuration:
+        operate-vnf-op-config:
+          day1-2:
+            - id: jujuproxy-kdu
+              config-primitive:
+                - name: execute-command
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: jujuproxy
+                    - name: command
+                      data-type: STRING
+                      default-value: ""
+                - name: list-k8s-services
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
