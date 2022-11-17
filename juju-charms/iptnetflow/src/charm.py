@@ -40,8 +40,8 @@ class IptnetflowCharm(CharmBase):
         """Start traffic mirroring process receiving the internal SC IP as input"""
         internal_ip = event.params["ip"]
         try:
-            subprocess.run("iptables","-t","mangle","-A","PREROUTING","-j","TEE","--gateway",internal_ip)
-            subprocess.run("iptables","-t","mangle","-A","POSTROUTING","-j","TEE","--gateway",internal_ip)
+            os.system("iptables -t mangle -A PREROUTING -j TEE --gateway " + internal_ip)
+            os.system("iptables -t mangle -A POSTROUTING -j TEE --gateway " + internal_ip)
             event.set_results({
                 "output": f"Traffic mirroring process started successfully"
             })
@@ -53,8 +53,8 @@ class IptnetflowCharm(CharmBase):
         """Stop traffic mirroring process receiving the internal SC IP as input """
         internal_ip = event.params["ip"]
         try:
-            subprocess.run("iptables","-t","mangle","-D","PREROUTING","-j","TEE","--gateway",internal_ip)
-            subprocess.run("iptables","-t","mangle","-D","POSTROUTING","-j","TEE","--gateway",internal_ip)
+            os.system("iptables -t mangle -D PREROUTING -j TEE --gateway " + internal_ip)
+            os.system("iptables -t mangle -D POSTROUTING -j TEE --gateway " + internal_ip)
             event.set_results({
                 "output": f"Traffic mirroring process stopped successfully"
             })
