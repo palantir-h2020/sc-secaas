@@ -21,6 +21,8 @@ class IptnetflowCharm(CharmBase):
         self.framework.observe(self.on.config_changed, self.configure_pod)
         self.framework.observe(self.on.run_action, self._on_run_action)
         self.framework.observe(self.on.start_netflow_action, self._on_start_netflow_action)
+        self.framework.observe(self.on.start_mirroring_action, self._on_start_mirroring_action)
+        self.framework.observe(self.on.stop_mirroring_action, self._on_stop_mirroring_action)
 
     def _on_run_action(self, event):
         """Execute command receiving the command as input"""
@@ -33,10 +35,37 @@ class IptnetflowCharm(CharmBase):
         except Exception as e:
             event.fail(f"Command: {cmd} failed with the following exception: {e}")
 
+
+    def _on_start_mirroring_action(self, event):
+        """Start traffic mirroring process receiving the internal SC IP as input"""
+        internal_ip = event.params["IP"]
+        try:
+            subprocess.run("iptables","-t","mangle","-A","PREROUTING","-j","TEE","--gateway",internal_ip)
+            subprocess.run("iptables","-t","mangle","-A","POSTROUTING","-j","TEE","--gateway",internal_ip)
+            event.set_results({
+                "output": f"Traffic mirroring process started successfully"
+            })
+        except Exception as e:
+            event.fail(f"Start traffic mirroring process failed with the following exception: {e}")
+
+
+    def _on_stop_mirroring_action(self, event):
+        """Stop traffic mirroring process receiving the internal SC IP as input """
+        internal_ip = event.params["IP"]
+        try:
+            subprocess.run("iptables","-t","mangle","-D","PREROUTING","-j","TEE","--gateway",internal_ip)
+            subprocess.run("iptables","-t","mangle","-D","POSTROUTING","-j","TEE","--gateway",internal_ip)
+            event.set_results({
+                "output": f"Traffic mirroring process stopped successfully"
+            })
+        except Exception as e:
+            event.fail(f"Stop traffic mirroring process failed with the following exception: {e}")
+
+
     def _on_start_netflow_action(self, event):
         """Start NetFlow Collector receiving the service where logs are sent as input"""
-        ip = event.params["ip"]
-        port = event.params["port"]
+        ip = event.params["IP"]
+        port = event.params["PORT"]
         try:
             os.system("fprobe -i eth0 -s 10 -g 10 -d 10 -e " + ip + ":" + str(port))
             event.set_results({
