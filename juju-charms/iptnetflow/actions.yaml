@@ -10,32 +10,32 @@ run:
 start-netflow:
     description: "Action to start NetFlow collection with fprobe"
     params:
-        IP:
+        ip:
             description: "IP address of NetFlow collector"
             type: string
             default: ""
-        PORT:
+        port:
             description: "Port of NetFlow collector"
             type: integer
             default: ""
     required:
-      - IP
-      - PORT
+      - ip
+      - port
 start-mirroring:
     description: "Action to start traffic mirroring process to internal SC"
     params:
-        IP:
+        ip:
             description: "IP address of internal SC"
             type: string
             default: ""
     required:
-      - IP
+      - ip
 stop-mirroring:
     description: "Action to stop traffic mirroring process to internal SC"
     params:
-        IP:
+        ip:
             description: "IP address of internal SC"
             type: string
             default: ""
     required:
-      - IP
+      - ip

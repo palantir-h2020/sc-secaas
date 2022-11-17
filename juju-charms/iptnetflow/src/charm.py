@@ -38,7 +38,7 @@ class IptnetflowCharm(CharmBase):
 
     def _on_start_mirroring_action(self, event):
         """Start traffic mirroring process receiving the internal SC IP as input"""
-        internal_ip = event.params["IP"]
+        internal_ip = event.params["ip"]
         try:
             subprocess.run("iptables","-t","mangle","-A","PREROUTING","-j","TEE","--gateway",internal_ip)
             subprocess.run("iptables","-t","mangle","-A","POSTROUTING","-j","TEE","--gateway",internal_ip)
@@ -51,7 +51,7 @@ class IptnetflowCharm(CharmBase):
 
     def _on_stop_mirroring_action(self, event):
         """Stop traffic mirroring process receiving the internal SC IP as input """
-        internal_ip = event.params["IP"]
+        internal_ip = event.params["ip"]
         try:
             subprocess.run("iptables","-t","mangle","-D","PREROUTING","-j","TEE","--gateway",internal_ip)
             subprocess.run("iptables","-t","mangle","-D","POSTROUTING","-j","TEE","--gateway",internal_ip)
@@ -64,8 +64,8 @@ class IptnetflowCharm(CharmBase):
 
     def _on_start_netflow_action(self, event):
         """Start NetFlow Collector receiving the service where logs are sent as input"""
-        ip = event.params["IP"]
-        port = event.params["PORT"]
+        ip = event.params["ip"]
+        port = event.params["port"]
         try:
             os.system("fprobe -i eth0 -s 10 -g 10 -d 10 -e " + ip + ":" + str(port))
             event.set_results({
