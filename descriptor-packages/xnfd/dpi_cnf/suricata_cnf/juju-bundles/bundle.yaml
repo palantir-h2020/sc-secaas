@@ -5,7 +5,7 @@ applications:
     charm: ./suricata_ubuntu-20.04-amd64.charm
     scale: 1
     resources:
-      snort-image: lopeez97/suricata:latest
+      image: lopeez97/suricata:latest
   #  options:
   #    enable-exporter: true
   # prometheus:

@@ -5,7 +5,7 @@ applications:
     charm: ./iptnetflow_ubuntu-20.04-amd64.charm
     scale: 1
     resources:
-      iptnetflow-image: lopeez97/iptnetflow:latest
+      image: lopeez97/iptnetflow:latest
   #  options:
   #    enable-exporter: true
   # prometheus:

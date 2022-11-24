@@ -1,1 +1,0 @@
-f1d975d9a1afc0af72b3461aad4b504a	jujuproxy_ns/jujuproxy_cnf_nsd.yaml

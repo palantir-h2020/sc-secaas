@@ -1,14 +1,14 @@
 nsd:
   nsd:
-  - description: NS with Wazuh xNF
+  - description: NS consisting of a single KNF wazuh_knf connected to mgmt network
     designer: UMU
     df:
     - id: default-df
       vnf-profile:
-      - id: wazuh_knf
+      - id: wazuh
         virtual-link-connectivity:
         - constituent-cpd-id:
-          - constituent-base-element-id: wazuh_knf
+          - constituent-base-element-id: wazuh
             constituent-cpd-id: mgmt-ext
           virtual-link-profile-id: mgmtnet
         vnfd-id: wazuh_knf
@@ -17,7 +17,6 @@ nsd:
     version: '1.0'
     virtual-link-desc:
     - id: mgmtnet
-      mgmt-network: true
+      mgmt-network: 'true'
     vnfd-id:
     - wazuh_knf
-

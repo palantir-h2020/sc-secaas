@@ -1,3 +1,0 @@
-f3b4a7bd9039008d6c01d501c29f4630	jujuproxy_cnf/jujuproxy_cnfd.yaml
-2117f1afcafdee3923e585ecf9b2d52c	jujuproxy_cnf/juju-bundles/bundle.yaml
-5ac4ad85ad31ec516b2ed19db216ffdd	jujuproxy_cnf/juju-bundles/wazuhproxy_ubuntu-20.04-amd64.charm
