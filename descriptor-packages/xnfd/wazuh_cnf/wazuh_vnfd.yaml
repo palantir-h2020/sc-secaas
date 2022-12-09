@@ -5,7 +5,7 @@ vnfd:
     lcm-operations-configuration:
       operate-vnf-op-config:
         day1-2:
-          - id: wazuh
+          - id: wazuh-kdu
             execution-environment-list:
             - id: wazuh-ee
               juju:
@@ -14,26 +14,29 @@ vnfd:
             config-primitive:
             - name: list-agents
               execution-environment-ref: wazuh-ee
-#            - name: remediation-action
-#              execution-environment-ref: wazuh-ee
-#              parameter:
-#                - name: remediation-action
-#                  data-type: STRING
-#                  default-value: ""
+            - name: active-response
+              execution-environment-ref: wazuh-ee
+              parameter:
+                - name: action
+                  data-type: STRING
+                  default-value: ""
+                - name: agent_id
+                  data-type: STRING
+                  default-value: ""
   ext-cpd:
   - id: mgmt-ext
     k8s-cluster-net: mgmtnet
-  id: wazuh_knf
+  id: wazuh_cnf
   k8s-cluster:
     nets:
     - id: mgmtnet
   kdu:
-  - name: wazuh
+  - name: wazuh-kdu
     helm-chart: wazuh.tgz
     service:
     - name: wazuh
   mgmt-cp: mgmt-ext
-  product-name: wazuh_knf
+  product-name: wazuh_cnf
   provider: UMU
   version: 1.0
 

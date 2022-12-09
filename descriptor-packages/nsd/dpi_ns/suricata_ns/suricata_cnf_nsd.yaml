@@ -8,12 +8,12 @@ nsd:
       - id: suricata_cnf
         virtual-link-connectivity:
         - constituent-cpd-id:
-          - constituent-base-element-id: snort_cnf
+          - constituent-base-element-id: suricata_cnf
             constituent-cpd-id: mgmtnet-ext
           virtual-link-profile-id: mgmtnet
         vnfd-id: suricata_cnf
-    id: suricata_cnf_ns
-    name: suricata_cnf_ns
+    id: suricata_ns
+    name: suricata_ns
     version: '1.0'
     virtual-link-desc:
     - id: mgmtnet

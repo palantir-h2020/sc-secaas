@@ -5,13 +5,13 @@ nsd:
     df:
     - id: default-df
       vnf-profile:
-      - id: wazuh
+      - id: wazuh_cnf
         virtual-link-connectivity:
         - constituent-cpd-id:
-          - constituent-base-element-id: wazuh
+          - constituent-base-element-id: wazuh_cnf
             constituent-cpd-id: mgmt-ext
           virtual-link-profile-id: mgmtnet
-        vnfd-id: wazuh_knf
+        vnfd-id: wazuh_cnf
     id: wazuh_ns
     name: wazuh_ns
     version: '1.0'
@@ -19,4 +19,4 @@ nsd:
     - id: mgmtnet
       mgmt-network: 'true'
     vnfd-id:
-    - wazuh_knf
+    - wazuh_cnf

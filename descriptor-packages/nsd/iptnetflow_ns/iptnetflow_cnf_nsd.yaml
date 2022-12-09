@@ -12,8 +12,8 @@ nsd:
             constituent-cpd-id: mgmtnet-ext
           virtual-link-profile-id: mgmtnet
         vnfd-id: iptnetflow_cnf
-    id: iptnetflow_cnf_ns
-    name: iptnetflow_cnf_ns
+    id: iptnetflow_ns
+    name: iptnetflow_ns
     version: '1.0'
     virtual-link-desc:
     - id: mgmtnet
