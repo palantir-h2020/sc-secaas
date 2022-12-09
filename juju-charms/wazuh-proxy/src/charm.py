@@ -1,115 +1,95 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
+"""Wazuh charm."""
+
+import json
 import logging
-
-import kubernetes.client
-from kubernetes import client, config
-from kubernetes.stream import stream
-
-import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from ops.charm import CharmBase
 from ops.main import main
-from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
+from ops.model import ActiveStatus, BlockedStatus
 
-logger = logging.getLogger(__name__)
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
-
-class WazuhproxyCharm(CharmBase):
-    """Class representing this Operator charm."""
-
-    def __init__(self, *args):
-        """Initialize charm and configure states and events to observe."""
-        super().__init__(*args)
-
-        self.framework.observe(self.on.config_changed, self._on_config_changed)
-        self.framework.observe(self.on.list_k8s_services_action, self._on_list_k8s_services_action)
-        self.framework.observe(self.on.execute_command_action, self._on_execute_command_action)
+from wazuh import Wazuh
 
 
-    def _on_execute_command_action(self, event):
-        try:
-            logger.info("Execute command function started")
-            command = event.params["cmd"]
-            name = event.params["name"]
-            v1 = self.get_instance
-            namespace = self.get_namespace(name, v1)
-            self.pod_exec(name, namespace, command, v1)
+class Service:
+    """Service Class."""
 
-            event.set_results({
-                "output": f"Execute command: Command executed successfully in {name} container"
-            })
-
-        except Exception as e:
-            event.fail(f"Stop: Snort service stopped failed with the following exception: {e}")
-
-
-    def _on_list_k8s_services_action(self, event):
-        try:
-            logger.info("List k8s services function started")
-            v1 = self.get_instance
-            print("Listing pods with their IPs:")
-            ret = v1.list_pod_for_all_namespaces(watch=False)
-            for i in ret.items:
-                print("%s\t%s\t%s" %
-                    (i.status.pod_ip, i.metadata.namespace, i.metadata.name))
-
-            event.set_results({
-                "output": f"Start: Snort service started successfully"
-            })
-
-        except Exception as e:
-            event.fail(f"Stop: Snort service stopped failed with the following exception: {e}")
-
-    def _on_config_changed(self, event):
-        self.unit.status = ActiveStatus()
-
+    def __init__(self, service_info: dict) -> None:
+        self._service_info = service_info
 
     @property
-    def get_instance(self):
-        aToken = "Token"
-        aConfiguration = client.Configuration()
-        aConfiguration.host = "IP"
-        aConfiguration.verify_ssl = False
-        aConfiguration.api_key = {"authorization": "Bearer " + aToken}
-        aApiClient = client.ApiClient(aConfiguration)
+    def ip(self):
+        """Get service ip."""
+        return self._service_info["ip"][0]
 
-        v1 = client.CoreV1Api(aApiClient)
-        return v1
+    def get_port(self, port_name):
+        """Get port using port name."""
+        return self._service_info["ports"][port_name]["port"]
 
 
-    def get_namespace(self, name, api_instance):
-        ret = api_instance.list_pod_for_all_namespaces(watch=False)
-        for i in ret.items:
-            if i.metadata.name == name:
-                return i.metadata.namespace
+class OsmConfig:
+    """OsmConfig Class."""
+
+    def __init__(self, charm: CharmBase) -> None:
+        self._charm = charm
+        self.log = logging.getLogger("osm.config")
+
+    def get_service(self, service_name: str) -> Service:
+        """Getting service object using service name."""
+        osm_config = json.loads(self._charm.config["osm-config"])
+        services = [
+            s_values
+            for s_name, s_values in osm_config["v0"]["k8s"]["services"].items()
+            if service_name == s_name
+        ]
+
+        return Service(services[0])
 
 
-    def pod_exec(self, name, namespace, command, api_instance):
-        exec_command = ["/bin/sh", "-c", command]
+class WazuhOperatorCharm(CharmBase):
+    """Wazuh Charm."""
 
-        resp = stream(api_instance.connect_get_namespaced_pod_exec,
-                  name,
-                  namespace,
-                  command=exec_command,
-                  stderr=True, stdin=False,
-                  stdout=True, tty=False,
-                  _preload_content=False)
+    def __init__(self, *args):
+        """Constructor for Wazuh Charm."""
+        super().__init__(*args)
+        self.osm_config = OsmConfig(self)
+        self.log = logging.getLogger("wazuh.operator")
+        self.framework.observe(self.on.config_changed, self._on_config_changed)
+        self.framework.observe(self.on.list_agents_action, self._on_list_agents_action)
 
-        while resp.is_open():
-            resp.update(timeout=1)
-            if resp.peek_stdout():
-                print(f"STDOUT: \n{resp.read_stdout()}")
-            if resp.peek_stderr():
-                print(f"STDERR: \n{resp.read_stderr()}")
 
-        resp.close()
+    def _on_config_changed(self, _):
+        """Handler for config-changed event."""
+        osm_config = self.config.get("osm-config")
+        if not osm_config:
+            self.unit.status = BlockedStatus("osm-config missing")
+            return
+        self.log.info(f"osm-config={osm_config}")
+        self.unit.status = ActiveStatus()
 
-        if resp.returncode != 0:
-            raise Exception("Script failed")
+    def _get_wazuh_manager_instance(self) -> Wazuh:
+        self.log.info("Creating Wazuh manager instance...")
+        wazuh_service = self.osm_config.get_service("wazuh")
+        wazuh_uri = f'https://{wazuh_service.ip}:{wazuh_service.get_port("api")}'
+        self.log.info(f"Wazuh instance received with IP: {wazuh_uri}")
+
+        return Wazuh(wazuh_uri)
+
+    def _on_list_agents_action(self, event):
+        """List agents connected to Wazuh workers."""
+        try:
+            self.log.info("Running list_agents action...")
+            wazuh = self._get_wazuh_manager_instance()
+
+            self.log.info("Wazuh instance received...")
+            result = wazuh.list_agents()
+
+            self.log.info(f"Result received: {result}")
+            event.set_results({"output": str(result)})
+        except Exception as e:
+            event.fail(f"Failed to list wazuh agents: {e}")
 
 
 if __name__ == "__main__":
-    main(WazuhproxyCharm)
+    main(WazuhOperatorCharm)

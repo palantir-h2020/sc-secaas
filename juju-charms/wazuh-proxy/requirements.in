@@ -1,4 +1,0 @@
-
-git+https://github.com/canonical/operator/#egg=ops
-jinja2
-psutil
