@@ -1,2 +1,16 @@
 list-agents:
     description: "List agents connected to Wazuh workers"
+active-response:
+    description: "Execute active-response in a Wazuh agent"
+    params:
+        action:
+            description: "Action to be executed. Add .sh for Ubuntu agents and .bat for Windows agents"
+            type: string
+            default: ""
+        agent_id:
+            description: "Agent id where the action will be triggered"
+            type: string
+            default: ""
+    required:
+      - action
+      - agent_id

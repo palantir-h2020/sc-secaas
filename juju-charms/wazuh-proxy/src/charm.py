@@ -57,6 +57,7 @@ class WazuhOperatorCharm(CharmBase):
         self.log = logging.getLogger("wazuh.operator")
         self.framework.observe(self.on.config_changed, self._on_config_changed)
         self.framework.observe(self.on.list_agents_action, self._on_list_agents_action)
+        self.framework.observe(self.on.active_response_action, self._on_active_response_action)
 
 
     def _on_config_changed(self, _):
@@ -79,13 +80,22 @@ class WazuhOperatorCharm(CharmBase):
     def _on_list_agents_action(self, event):
         """List agents connected to Wazuh workers."""
         try:
-            self.log.info("Running list_agents action...")
+            self.log.info("Running list-agents action...")
             wazuh = self._get_wazuh_manager_instance()
-
-            self.log.info("Wazuh instance received...")
             result = wazuh.list_agents()
+            event.set_results({"output": str(result)})
+        except Exception as e:
+            event.fail(f"Failed to list wazuh agents: {e}")
 
-            self.log.info(f"Result received: {result}")
+
+    def _on_active_response_action(self, event):
+        """Execute action in the Wazuh agent indicated as parameter."""
+        try:
+            self.log.info("Running active-response action...")
+            wazuh = self._get_wazuh_manager_instance()
+            active_response = event.params["action"]
+            agent_id = event.params["agent_id"]
+            result = wazuh.active_response(active_response, agent_id)
             event.set_results({"output": str(result)})
         except Exception as e:
             event.fail(f"Failed to list wazuh agents: {e}")
