@@ -8,6 +8,8 @@ from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
 import fileinput
+import psutil
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -101,8 +103,18 @@ class SuricataCharm(CharmBase):
                      "output": f"Status: Suricata is not running"
                 })
            else:
+                listOfProcObjects = []
+                for proc in psutil.process_iter():
+                    pinfo = proc.as_dict(attrs=['name', 'cpu_percent'])
+                    pinfo['ram_usage'] = self.get_size(proc.memory_info().vms)
+                    if pinfo['name'] == 'Suricata-Main' and pinfo['ram_usage'] != "0.00B":
+                        listOfProcObjects.append(pinfo);
+                    io = psutil.net_io_counters()
+                    net_usage = {"bytes_sent": self.get_size(io.bytes_sent), "bytes_recv": self.get_size(io.bytes_recv)}
                 event.set_results({
-                     "output": f"Status: Suricata is running"
+                     "output": f"Status: Suricata is running",
+                     "service-usage": listOfProcObjects,
+                     "network-usage": str(net_usage)
                 })
 
         except Exception as e:
@@ -143,7 +155,7 @@ class SuricataCharm(CharmBase):
     def _on_start_service_action(self, event):
         """Start Suricata service"""
         try:
-            subprocess.run(["service","suricata","restart"], check=True, capture_output=True, text=True)
+            subprocess.run(["service","suricata","start"], check=True, capture_output=True, text=True)
             event.set_results({
                 "output": f"Start: Suricata service started successfully"
             })
@@ -189,6 +201,16 @@ class SuricataCharm(CharmBase):
 
         self.unit.status = ActiveStatus()
         self.app.status = ActiveStatus()
+
+
+    def get_size(self, bytes):
+        """
+        Returns size of bytes in a nice format
+        """
+        for unit in ['', 'K', 'M', 'G', 'T', 'P']:
+            if bytes < 1024:
+                return f"{bytes:.2f}{unit}B"
+            bytes /= 1024
 
 
 

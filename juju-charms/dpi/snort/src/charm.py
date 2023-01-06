@@ -8,6 +8,7 @@ from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
 import psutil
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -105,13 +106,21 @@ class SnortCharm(CharmBase):
     def _on_health_check_action(self, event):
         """Stop Snort service"""
         try:
+            listOfProcObjects = []
             for process in psutil.process_iter():
                 if "snort" in process.name() and "zombie" not in process.status():
+                    pinfo = process.as_dict(attrs=['name', 'cpu_percent'])
+                    pinfo['ram_usage'] = self.get_size(process.memory_info().vms)
+#                        if pinfo['name'] == 'snort' and pinfo['ram_usage'] != "0.00B":
+                    listOfProcObjects.append(pinfo);
+                    io = psutil.net_io_counters()
+                    net_usage = {"bytes_sent": self.get_size(io.bytes_sent), "bytes_recv": self.get_size(io.bytes_recv)}
                     event.set_results({
-                        "output": f"Health-check: Snort service is running"
+                        "output": f"Status: Snort is running",
+                        "service-usage": listOfProcObjects,
+                        "network-usage": str(net_usage)
                     })
                     return
-
             event.set_results({
                 "output": f"Stop: Snort service is not running"
             })
@@ -191,6 +200,15 @@ class SnortCharm(CharmBase):
         self.unit.status = ActiveStatus()
         self.app.status = ActiveStatus()
 
+
+    def get_size(self, bytes):
+        """
+        Returns size of bytes in a nice format
+        """
+        for unit in ['', 'K', 'M', 'G', 'T', 'P']:
+            if bytes < 1024:
+                return f"{bytes:.2f}{unit}B"
+            bytes /= 1024
 
 
 if __name__ == "__main__":
