@@ -155,7 +155,8 @@ class SuricataCharm(CharmBase):
     def _on_start_service_action(self, event):
         """Start Suricata service"""
         try:
-            subprocess.run(["service","suricata","start"], check=True, capture_output=True, text=True)
+            subprocess.run(["service","suricata","restart"], check=True, capture_output=True, text=True)
+            subprocess.run(["service","filebeat","restart"], check=True, capture_output=True, text=True)
             event.set_results({
                 "output": f"Start: Suricata service started successfully"
             })
@@ -167,6 +168,7 @@ class SuricataCharm(CharmBase):
         """Stop Suricata service"""
         try:
             subprocess.run(["service","suricata","stop"], check=True, capture_output=True, text=True)
+            subprocess.run(["service","filebeat","stop"], check=True, capture_output=True, text=True)
             event.set_results({
                 "output": f"Start: Suricata service stopped successfully"
             })

@@ -49,6 +49,7 @@ class SnortCharm(CharmBase):
                     interface = value
 
             subprocess.Popen(['snort', '-D', '-i', interface, '-c', '/etc/snort/etc/snort.conf', '-l', '/var/log/snort'])
+            os.system("service filebeat start")
             event.set_results({
                 "output": f"Start: Snort service started successfully"
             })
@@ -91,6 +92,7 @@ class SnortCharm(CharmBase):
             for process in psutil.process_iter():
                 if "snort" in process.name() and "zombie" not in process.status():
                     process.kill()
+                    os.system("service filebeat stop")
                     event.set_results({
                         "output": f"Stop: Snort service stopped successfully"
                     })
