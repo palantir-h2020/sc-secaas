@@ -7,7 +7,8 @@ from ops.main import main
 from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
-#import iptc
+import psutil
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,6 +24,7 @@ class IptnetflowCharm(CharmBase):
         self.framework.observe(self.on.start_netflow_action, self._on_start_netflow_action)
         self.framework.observe(self.on.start_mirroring_action, self._on_start_mirroring_action)
         self.framework.observe(self.on.stop_mirroring_action, self._on_stop_mirroring_action)
+        self.framework.observe(self.on.health_check_action, self._on_health_check_action)
 
     def _on_run_action(self, event):
         """Execute command receiving the command as input"""
@@ -49,6 +51,31 @@ class IptnetflowCharm(CharmBase):
             event.fail(f"Start traffic mirroring process failed with the following exception: {e}")
 
 
+    def _on_health_check_action(self, event):
+        """Health-check service"""
+        try:
+            listOfProcObjects = []
+            for process in psutil.process_iter():
+                if "softflowd" in process.name() and "zombie" not in process.status():
+                    pinfo = process.as_dict(attrs=['name', 'cpu_percent'])
+                    pinfo['ram_usage'] = self.get_size(process.memory_info().vms)
+                    listOfProcObjects.append(pinfo);
+                    io = psutil.net_io_counters()
+                    net_usage = {"bytes_sent": self.get_size(io.bytes_sent), "bytes_recv": self.get_size(io.bytes_recv)}
+                    event.set_results({
+                        "output": f"Status: Iptables is running and Softflowd is running",
+                        "service-usage": listOfProcObjects,
+                        "network-usage": str(net_usage)
+                    })
+                    return
+            event.set_results({
+                "output": f"Health-check: Iptables is running but Softflowd is not running"
+            })
+        except Exception as e:
+            event.fail(f"Health-check: Health-check status failed with the following exception: {e}")
+
+
+
     def _on_stop_mirroring_action(self, event):
         """Stop traffic mirroring process receiving the internal SC IP as input """
         internal_ip = event.params["ip"]
@@ -66,8 +93,15 @@ class IptnetflowCharm(CharmBase):
         """Start NetFlow Collector receiving the service where logs are sent as input"""
         ip = event.params["ip"]
         port = event.params["port"]
+        address = ip + ":" + str(port)
+        cmd = "softflowd -i ens18 -n " + address + " -v 9 -P udp -t maxlife=30s -D"
         try:
-            os.system("fprobe -i eth0 -s 10 -g 10 -d 10 -e " + ip + ":" + str(port))
+#            proc = os.spawnl(os.P_NOWAIT, 'softflowd -i ens18 -n ' + address + ' -d -v 9 -P udp -t maxlife=30s -d &')
+            pid = subprocess.Popen([cmd], shell=True, stdin=None, stdout=None, stderr=None).pid #, stdin=None, stdout=None, stderr=None, close_fds=True)
+#            pid = subprocess.Popen(['softflowd','-i','ens18','-n',address,'-v','9','-P','udp','-t','maxlife=30s','-D'],shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+#            print(pid)
+#            proc = os.system("softflowd -i ens18 -n " + address + " -v 9 -P udp -t maxlife=30s -d &")
+#            os.system("fprobe -i eth0 -s 10 -g 10 -d 10 -e " + ip + ":" + str(port))
             event.set_results({
                 "output": f"NetFlow collector started for {ip}:{port} successfully"
             })
@@ -102,6 +136,15 @@ class IptnetflowCharm(CharmBase):
         self.unit.status = ActiveStatus()
         self.app.status = ActiveStatus()
 
+
+    def get_size(self, bytes):
+        """
+        Returns size of bytes in a nice format
+        """
+        for unit in ['', 'K', 'M', 'G', 'T', 'P']:
+            if bytes < 1024:
+                return f"{bytes:.2f}{unit}B"
+            bytes /= 1024
 
 
 if __name__ == "__main__":

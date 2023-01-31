@@ -18,14 +18,14 @@ filebeat.inputs:
 # you can use different inputs for various configurations.
 # Below are the input specific configurations.
 
-#- type: log
+- type: log
 
   # Change to true to enable this input configuration.
-#  enabled: false
+  enabled: false
 
   # Paths that should be crawled and fetched. Glob based paths.
-#  paths:
-#    - /var/log/snort/alert
+  paths:
+    - /var/log/suricata/eve.log
     #- c:\programdata\elasticsearch\logs\*
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
@@ -70,7 +70,7 @@ filebeat.inputs:
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-    - /var/log/ulog/syslogemu.log
+    - /var/log/suricata/eve.json
     #- c:\programdata\elasticsearch\logs\*
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
@@ -187,8 +187,8 @@ setup.template.settings:
 
   # ---------------------------- Kafka Output ----------------------------------
 output.kafka:
-  hosts: ["kafka:9092"]
-  topic: "snort"
+  hosts: ["10.101.41.255:9092"]
+  topic: "sc.generated_log.suricata"
   #topics:
   #  - topic: "critical-%{[agent.version]}"
   #    when.contains:

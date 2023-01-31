@@ -7,6 +7,8 @@ run:
             default: ""
     required:
       - cmd
+health-check:
+    description: "Check the status of the internal services"
 start-netflow:
     description: "Action to start NetFlow collection with fprobe"
     params:
