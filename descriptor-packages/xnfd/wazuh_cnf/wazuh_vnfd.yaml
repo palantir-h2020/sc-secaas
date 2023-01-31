@@ -32,7 +32,7 @@ vnfd:
     - id: mgmtnet
   kdu:
   - name: wazuh-kdu
-    helm-chart: wazuh.tgz
+    helm-chart: wazuh-1.tgz
     service:
     - name: wazuh
   mgmt-cp: mgmt-ext
