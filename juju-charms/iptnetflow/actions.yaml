@@ -1,16 +1,7 @@
-run:
-    description: "Action to execute a command into container"
-    params:
-        cmd:
-            description: "Command to be executed"
-            type: string
-            default: ""
-    required:
-      - cmd
 health-check:
     description: "Check the status of the internal services"
 start-netflow:
-    description: "Action to start NetFlow collection with fprobe"
+    description: "Action to start NetFlow collection"
     params:
         ip:
             description: "IP address of NetFlow collector"
@@ -23,6 +14,12 @@ start-netflow:
     required:
       - ip
       - port
+stop-netflow:
+    description: "Action to stop the NetFlow collection"
+start-zeek:
+    description: "Action to start Zeek collection"
+stop-zeek:
+    description: "Action to stop Zeek collection"
 start-mirroring:
     description: "Action to start traffic mirroring process to internal SC"
     params:

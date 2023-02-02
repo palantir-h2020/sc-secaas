@@ -22,14 +22,6 @@ vnfd:
           day1-2:
             - id: iptnetflow-kdu
               config-primitive:
-                - name: run
-                  parameter:
-                    - name: application-name
-                      data-type: STRING
-                      default-value: iptnetflow
-                    - name: cmd
-                      data-type: STRING
-                      default-value: ""
                 - name: start-netflow
                   parameter:
                     - name: application-name
@@ -40,4 +32,40 @@ vnfd:
                       default-value: ""
                     - name: port
                       data-type: INTEGER
+                      default-value: ""
+                - name: stop-netflow
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                - name: health-check
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                - name: start-zeek
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                - name: stop-zeek
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                - name: start-mirroring
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                    - name: ip
+                      data-type: STRING
+                      default-value: ""
+                - name: stop-mirroring
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                    - name: ip
+                      data-type: STRING
                       default-value: ""

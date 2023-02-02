@@ -8,6 +8,8 @@ from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
 import psutil
+import time
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -20,22 +22,13 @@ class IptnetflowCharm(CharmBase):
         super().__init__(*args)
 
         self.framework.observe(self.on.config_changed, self.configure_pod)
-        self.framework.observe(self.on.run_action, self._on_run_action)
         self.framework.observe(self.on.start_netflow_action, self._on_start_netflow_action)
+        self.framework.observe(self.on.stop_netflow_action, self._on_stop_netflow_action)
+        self.framework.observe(self.on.start_zeek_action, self._on_start_zeek_action)
+        self.framework.observe(self.on.stop_zeek_action, self._on_stop_zeek_action)
         self.framework.observe(self.on.start_mirroring_action, self._on_start_mirroring_action)
         self.framework.observe(self.on.stop_mirroring_action, self._on_stop_mirroring_action)
         self.framework.observe(self.on.health_check_action, self._on_health_check_action)
-
-    def _on_run_action(self, event):
-        """Execute command receiving the command as input"""
-        cmd = event.params["cmd"]
-        try:
-            os.system(cmd)
-            event.set_results({
-                "output": f"Command: {cmd} executed successfully"
-            })
-        except Exception as e:
-            event.fail(f"Command: {cmd} failed with the following exception: {e}")
 
 
     def _on_start_mirroring_action(self, event):
@@ -89,21 +82,50 @@ class IptnetflowCharm(CharmBase):
             event.fail(f"Stop traffic mirroring process failed with the following exception: {e}")
 
 
+    def _on_start_zeek_action(self, event):
+        """Start Zeek Collector"""
+        try:
+            result = requests.get('http://localhost:5000/start-zeek', verify=False)
+            event.set_results({
+                "output": str(result.json())
+            })
+        except Exception as e:
+            event.fail(f"NetFlow collector stopping failed with the following exception: {e}")
+
+
+    def _on_stop_zeek_action(self, event):
+        """Stop Zeek Collectors"""
+        try:
+            result = requests.get('http://localhost:5000/stop-zeek', verify=False)
+            event.set_results({
+                "output": str(result.json())
+            })
+        except Exception as e:
+            event.fail(f"NetFlow collector stopping failed with the following exception: {e}")
+
+
+    def _on_stop_netflow_action(self, event):
+        """Stop NetFlow Collectors"""
+        try:
+            result = requests.get('http://localhost:5000/stop-netflow', verify=False)
+            event.set_results({
+                "output": str(result.json())
+            })
+        except Exception as e:
+            event.fail(f"NetFlow collector stopping failed with the following exception: {e}")
+
+
     def _on_start_netflow_action(self, event):
         """Start NetFlow Collector receiving the service where logs are sent as input"""
         ip = event.params["ip"]
         port = event.params["port"]
-        address = ip + ":" + str(port)
-        cmd = "softflowd -i ens18 -n " + address + " -v 9 -P udp -t maxlife=30s -D"
+        headers =  {"Content-Type":"application/json"}
         try:
-#            proc = os.spawnl(os.P_NOWAIT, 'softflowd -i ens18 -n ' + address + ' -d -v 9 -P udp -t maxlife=30s -d &')
-            pid = subprocess.Popen([cmd], shell=True, stdin=None, stdout=None, stderr=None).pid #, stdin=None, stdout=None, stderr=None, close_fds=True)
-#            pid = subprocess.Popen(['softflowd','-i','ens18','-n',address,'-v','9','-P','udp','-t','maxlife=30s','-D'],shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
-#            print(pid)
-#            proc = os.system("softflowd -i ens18 -n " + address + " -v 9 -P udp -t maxlife=30s -d &")
-#            os.system("fprobe -i eth0 -s 10 -g 10 -d 10 -e " + ip + ":" + str(port))
+            data = '{"ip": "' + ip + '", "port": ' + str(port) + '}'
+            result = requests.post('http://localhost:5000/start-netflow', headers=headers, data=data, verify=False)
+
             event.set_results({
-                "output": f"NetFlow collector started for {ip}:{port} successfully"
+                "output": str(result.json())
             })
         except Exception as e:
             event.fail(f"NetFlow collector failed with the following exception: {e}")
@@ -116,7 +138,7 @@ class IptnetflowCharm(CharmBase):
         containers = [
             {
                 "name": self.framework.model.app.name,
-                "image": "lopeez97/iptnetflow:latest",
+                "image": "lopeez97/iptnetflow:1.0.2",
                 "ports": [
                     {
                         "name": "iptnetflow",
@@ -124,7 +146,7 @@ class IptnetflowCharm(CharmBase):
                         "protocol": "TCP",
                     }
                 ],
-                "command": ["/bin/bash","-ce","tail -f /dev/null",],
+#                "command": ["/bin/bash","-ce","python3 app.py",],
                 "kubernetes": { "securityContext": { "privileged": True}}
             }
         ]

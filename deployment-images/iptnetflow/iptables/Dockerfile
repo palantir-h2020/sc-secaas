@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 #RUN git clone https://gitlab.com/palantir-project/ti-re
 ENV DEBIAN_FRONTEND=noninteractive
 COPY ./fprobe /etc/default/fprobe
-RUN apt-get -y update && apt-get -y install python3 python3-pip fprobe iptables wget software-properties-common net-tools nano
+RUN apt-get -y update && apt-get -y install python3 python3-pip fprobe iptables wget software-properties-common net-tools nano build-essential
 RUN apt-get -y install ulogd2
 RUN apt-get -y install traceroute iputils-ping iproute2
 RUN apt-get -y install openssh-server
@@ -33,3 +33,10 @@ RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN apt-get install -y ntap
+
+#Launch API
+COPY ./app.py /home
+WORKDIR /home
+RUN pip install flask psutil
+ENTRYPOINT ["python3"]
+CMD ["app.py"]

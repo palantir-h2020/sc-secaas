@@ -70,7 +70,7 @@ filebeat.inputs:
 
   # Paths that should be crawled and fetched. Glob based paths.
   paths:
-    - /var/log/ulog/syslogemu.log
+    - /home/conn.log
     #- c:\programdata\elasticsearch\logs\*
 
   # Exclude lines. A list of regular expressions to match. It drops the lines that are
@@ -187,8 +187,8 @@ setup.template.settings:
 
   # ---------------------------- Kafka Output ----------------------------------
 output.kafka:
-  hosts: ["kafka:9092"]
-  topic: "snort"
+  hosts: ["10.101.41.255:9092"]
+  topic: "sc.generated_log.zeek"
   #topics:
   #  - topic: "critical-%{[agent.version]}"
   #    when.contains:
