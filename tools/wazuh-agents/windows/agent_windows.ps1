@@ -7,13 +7,12 @@ SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
 choco install nano -y
 
 # Copy ossec.conf to specific location
-cp .\ossec.conf "C:\Program Files (x86)\ossec-agent\"
-cp .\local_internal_options.conf "C:\Program Files (x86)\ossec-agent\"
-cp .\script.bat "C:\Program Files (x86)\ossec-agent\active-response\bin\"
+cp .\ossec.conf 'C:\Program Files (x86)\ossec-agent\'
+cp .\local_internal_options.conf 'C:\Program Files (x86)\ossec-agent\'
+cp .\script.bat 'C:\Program Files (x86)\ossec-agent\active-response\bin\'
 
 # Install Sysmon
 .\Sysmon.exe -accepteula -i sysmonconfig.xml
 
 # Start Wazuh Agent
 NET START WazuhSvc
- 

@@ -1,5 +1,7 @@
 list-agents:
     description: "List agents connected to Wazuh workers"
+health-check:
+    description: "Check if Wazuh and Agents are running"
 active-response:
     description: "Execute active-response in a Wazuh agent"
     params:

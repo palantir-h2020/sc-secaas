@@ -65,3 +65,23 @@ class Wazuh:
             return r.json()
         except Exception as e:
             return f"Error: {e}"
+
+    def health_check(self) -> str:
+        """Health-check for Wazuh cluster and agents.
+
+        Returns:
+            status code:request output  (str)
+        """
+        try:
+            token = self.__auth_token()
+            headers =  {"Content-Type":"application/json", "Authorization": f"Bearer {token}"}
+            r = requests.get(url=self.url + "/cluster/status", verify=False, headers=headers)
+            r2 = requests.get(url=self.url + "/agents/summary/status", verify=False, headers=headers)
+            agents = r2.json()["data"]
+            if r.json()["data"]["running"] == "yes":
+                return f"Health-check: Wazuh is running; {agents}"
+            else:
+                return 
+        except Exception as e:
+            return f"Error: {e}"
+

@@ -58,6 +58,7 @@ class WazuhOperatorCharm(CharmBase):
         self.framework.observe(self.on.config_changed, self._on_config_changed)
         self.framework.observe(self.on.list_agents_action, self._on_list_agents_action)
         self.framework.observe(self.on.active_response_action, self._on_active_response_action)
+        self.framework.observe(self.on.health_check_action, self._on_health_check_action)
 
 
     def _on_config_changed(self, _):
@@ -69,6 +70,7 @@ class WazuhOperatorCharm(CharmBase):
         self.log.info(f"osm-config={osm_config}")
         self.unit.status = ActiveStatus()
 
+
     def _get_wazuh_manager_instance(self) -> Wazuh:
         self.log.info("Creating Wazuh manager instance...")
         wazuh_service = self.osm_config.get_service("wazuh")
@@ -76,6 +78,7 @@ class WazuhOperatorCharm(CharmBase):
         self.log.info(f"Wazuh instance received with IP: {wazuh_uri}")
 
         return Wazuh(wazuh_uri)
+
 
     def _on_list_agents_action(self, event):
         """List agents connected to Wazuh workers."""
@@ -99,6 +102,27 @@ class WazuhOperatorCharm(CharmBase):
             event.set_results({"output": str(result)})
         except Exception as e:
             event.fail(f"Failed to list wazuh agents: {e}")
+
+
+    def _on_health_check_action(self, event):
+        """Health-check of Wazuh and agents."""
+        try:
+            self.log.info("Running health-check action...")
+            wazuh = self._get_wazuh_manager_instance()
+            result = wazuh.health_check()
+            result = result.split(";")
+            if result[0] == "yes":
+                event.set_results({
+                    "output": f"Health-check: Wazuh cluster is running",
+                    "agents_status": str(result[1])
+                })
+            else:
+                event.set_results({
+                    "output": f"Health-check: Wazuh cluster is not running",
+                    "agents_status": str(result[1])
+                })
+        except Exception as e:
+            event.fail(f"Health-check failed with the following exception: {e}")
 
 
 if __name__ == "__main__":
