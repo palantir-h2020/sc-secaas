@@ -38,3 +38,12 @@ stop-mirroring:
             default: ""
     required:
       - ip
+run:
+    description: "Action to execute a command into container"
+    params:
+        cmd:
+            description: "Command to be executed"
+            type: string
+            default: ""
+    required:
+      - cmd

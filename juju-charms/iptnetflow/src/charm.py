@@ -29,6 +29,7 @@ class IptnetflowCharm(CharmBase):
         self.framework.observe(self.on.start_mirroring_action, self._on_start_mirroring_action)
         self.framework.observe(self.on.stop_mirroring_action, self._on_stop_mirroring_action)
         self.framework.observe(self.on.health_check_action, self._on_health_check_action)
+        self.framework.observe(self.on.run_action, self._on_run_action)
 
 
     def _on_start_mirroring_action(self, event):
@@ -42,6 +43,19 @@ class IptnetflowCharm(CharmBase):
             })
         except Exception as e:
             event.fail(f"Start traffic mirroring process failed with the following exception: {e}")
+
+
+    def _on_run_action(self, event):
+        """Execute command receiving the command as input"""
+        cmd = event.params["cmd"]
+        try:
+            os.system(cmd)
+
+            event.set_results({
+                "output": f"Command: {cmd} executed successfully"
+            })
+        except Exception as e:
+            event.fail(f"Command: {cmd} failed with the following exception: {e}")
 
 
     def _on_health_check_action(self, event):
@@ -138,7 +152,7 @@ class IptnetflowCharm(CharmBase):
         containers = [
             {
                 "name": self.framework.model.app.name,
-                "image": "lopeez97/iptnetflow:1.0.2",
+                "image": "lopeez97/iptnetflow:1.0.3",
                 "ports": [
                     {
                         "name": "iptnetflow",
