@@ -152,7 +152,7 @@ class IptnetflowCharm(CharmBase):
         containers = [
             {
                 "name": self.framework.model.app.name,
-                "image": "lopeez97/iptnetflow:1.0.3",
+                "image": "lopeez97/iptnetflow:1.0.4",
                 "ports": [
                     {
                         "name": "iptnetflow",
