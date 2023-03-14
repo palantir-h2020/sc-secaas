@@ -14,7 +14,11 @@ RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.3-a
 RUN dpkg -i filebeat-7.13.3-amd64.deb
 COPY ./filebeat.yml /etc/filebeat/filebeat.yml
 RUN filebeat modules enable iptables
-RUN apt-get install softflowd -y
+
+#Install softflowd
+
+RUN apt-get install -y dh-autoreconf gcc make perl libpcap-dev git
+RUN git clone https://github.com/irino/softflowd.git && cd softflowd && autoreconf -if && ./configure && make && make install
 
 #Install Zeek
 WORKDIR /zeeklogs
@@ -37,6 +41,6 @@ RUN apt-get install -y ntap
 #Launch API
 COPY ./app.py /home
 WORKDIR /home
-RUN pip install flask psutil
+RUN pip install flask psutil get-nic
 ENTRYPOINT ["python3"]
 CMD ["app.py"]
