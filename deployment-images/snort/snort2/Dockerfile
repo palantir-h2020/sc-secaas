@@ -48,3 +48,12 @@ COPY ./rules /etc/snort/rules/
 COPY ./portscanning.rules /etc/snort/rules/local.rules
 RUN filebeat modules enable snort
 WORKDIR /home
+
+#Install ntap_collector
+RUN apt-get install software-properties-common wget apt-utils -y
+RUN add-apt-repository universe
+RUN wget https://packages.ntop.org/apt/22.04/all/apt-ntop.deb
+RUN apt install ./apt-ntop.deb
+RUN add-apt-repository ppa:openjdk-r/ppa
+RUN apt-get update -y
+RUN apt-get install ntap -y
