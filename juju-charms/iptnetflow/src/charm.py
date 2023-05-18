@@ -133,9 +133,10 @@ class IptnetflowCharm(CharmBase):
         """Start NetFlow Collector receiving the service where logs are sent as input"""
         ip = event.params["ip"]
         port = event.params["port"]
+        iface = event.params["iface"]
         headers =  {"Content-Type":"application/json"}
         try:
-            data = '{"ip": "' + ip + '", "port": ' + str(port) + '}'
+            data = '{"ip": "' + ip + '", "port": ' + str(port) + ', "iface": "' + iface + '"}'
             result = requests.post('http://localhost:5000/start-netflow', headers=headers, data=data, verify=False)
 
             event.set_results({
@@ -152,7 +153,7 @@ class IptnetflowCharm(CharmBase):
         containers = [
             {
                 "name": self.framework.model.app.name,
-                "image": "lopeez97/iptnetflow:1.0.4",
+                "image": "lopeez97/iptnetflow:1.0.6",
                 "ports": [
                     {
                         "name": "iptnetflow",

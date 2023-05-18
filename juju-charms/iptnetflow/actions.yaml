@@ -11,6 +11,10 @@ start-netflow:
             description: "Port of NetFlow collector"
             type: integer
             default: ""
+        iface:
+            description: "Iface for NetFlow collection"
+            type: string
+            default: "none"
     required:
       - ip
       - port
