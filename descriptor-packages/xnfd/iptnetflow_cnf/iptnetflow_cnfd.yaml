@@ -21,6 +21,37 @@ vnfd:
         operate-vnf-op-config:
           day1-2:
             - id: iptnetflow-kdu
+              initial-config-primitive:
+                - seq: 0
+                  name: start-netflow
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      value: iptnetflow
+                    - name: ip
+                      data-type: STRING
+                      value: 10.101.41.19
+                    - name: port
+                      data-type: INTEGER
+                      value: 9999
+                - seq: 1
+                  name: start-netflow      
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      value: iptnetflow
+                    - name: ip
+                      data-type: STRING
+                      value: 10.101.41.193
+                    - name: port
+                      data-type: INTEGER
+                      value: 32001
+                - seq: 2
+                  name: start-zeek
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      value: iptnetflow
               config-primitive:
                 - name: start-netflow
                   parameter:
@@ -67,5 +98,13 @@ vnfd:
                       data-type: STRING
                       default-value: iptnetflow
                     - name: ip
+                      data-type: STRING
+                      default-value: ""
+                - name: run
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: iptnetflow
+                    - name: cmd
                       data-type: STRING
                       default-value: ""

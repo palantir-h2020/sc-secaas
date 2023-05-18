@@ -14,6 +14,8 @@ vnfd:
             config-primitive:
             - name: list-agents
               execution-environment-ref: wazuh-ee
+            - name: health-check
+              execution-environment-ref: wazuh-ee
             - name: active-response
               execution-environment-ref: wazuh-ee
               parameter:
@@ -32,7 +34,7 @@ vnfd:
     - id: mgmtnet
   kdu:
   - name: wazuh-kdu
-    helm-chart: wazuh-1.tgz
+    helm-chart: wazuh.tgz
     service:
     - name: wazuh
   mgmt-cp: mgmt-ext
