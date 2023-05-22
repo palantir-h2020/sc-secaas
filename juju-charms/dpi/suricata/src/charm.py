@@ -32,7 +32,7 @@ class SuricataCharm(CharmBase):
 
 
     def _on_start_configuration_action(self, event):
-        """Configure Snort service"""
+        """Configure Suricata service"""
         try:
             result = subprocess.run(["hostname","-I"], check=True, capture_output=True, text=True)
             output = result.stdout.split(' ')
@@ -112,9 +112,9 @@ class SuricataCharm(CharmBase):
                     io = psutil.net_io_counters()
                     net_usage = {"bytes_sent": self.get_size(io.bytes_sent), "bytes_recv": self.get_size(io.bytes_recv)}
                 event.set_results({
-                     "output": f"Status: Suricata is running",
-                     "service-usage": listOfProcObjects,
-                     "network-usage": str(net_usage)
+                    "output": f"Status: Suricata is running",
+                    "service-usage": listOfProcObjects,
+                    "network-usage": str(net_usage)
                 })
 
         except Exception as e:

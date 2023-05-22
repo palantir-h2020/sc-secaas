@@ -1,0 +1,57 @@
+version: "3.7"
+services:
+    zookeeper:
+        restart: always
+        hostname: zookeeper
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.5
+    
+    kafka:
+        restart: always
+        image: wurstmeister/kafka
+        hostname: kafka
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: kafka
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        networks:
+            palantir-backend:
+                ipv4_address: 10.1.1.6
+        depends_on:
+        - zookeeper
+
+    secaas_snort:
+        restart: always
+        build: snort2
+        hostname: snort2
+        stdin_open: true
+        tty: true
+        networks: 
+            # eth0
+            palantir-ids:
+                ipv4_address: 10.2.1.7
+            # eth 1
+            palantir-backend:
+                ipv4_address: 10.1.1.7
+        command: "bash"
+        depends_on:
+        - kafka
+#        volumes:
+#            - "./snort2/portscanning.rules:/etc/snort/rules/local.rules"
+
+networks:
+    palantir-backend:
+        internal: true
+        name: br1-palantir-internal
+        ipam:
+            config:
+                - subnet: "10.1.1.0/24"
+    palantir-ids:
+        internal: true
+        name: br2-palantir-ids
+        ipam:
+            config:
+                - subnet: "10.2.1.0/24"
