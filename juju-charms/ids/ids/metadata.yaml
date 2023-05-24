@@ -1,0 +1,25 @@
+name: ids
+summary: Kubernetes operator for Snort and Suricata
+maintainers:
+    - Antonio López <antonio.lopez41@um.es>
+description: |
+    Snort and Suricata are the foremost Open Source Intrusion Prevention System (IPS)
+    in the world. Snort and Suricata uses a series of rules that help define malicious
+    network activity and uses those rules to find packets that match against 
+    them and generates alerts for users.
+tags:
+    - proxy
+    - firewall
+    - web
+series:
+    - kubernetes
+deployment:
+    service: loadbalancer
+resources:
+    image:
+        type: oci-image
+        description: Docker image for ids
+        upstream-source: "lopeez97/ids:1.0.1"
+#provides:
+#    prometheus-target:
+#        interface: http

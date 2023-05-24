@@ -1,0 +1,55 @@
+run:
+    description: "Action to execute a command into container"
+    params:
+        cmd:
+            description: "Command to be executed"
+            type: string
+            default: ""
+    required:
+      - cmd
+start-service:
+    params:
+        service:
+            description: "Service to be executed"
+            type: string
+            default: ""
+    description: "Start IDS service with default config"
+start-configuration:
+    params:
+        service:
+            description: "Service to be configured"
+            type: string
+            default: ""
+    description: "Apply the initial configuration with home network ip range to IDS service"
+health-check:
+    params:
+        service:
+            description: "Service to be checked"
+            type: string
+            default: ""
+    description: "Check if IDS service is running"
+stop-service:
+    params:
+        service:
+            description: "Service to be triggered"
+            type: string
+            default: ""
+    description: "Stop IDS service"
+add-rule:
+    description: "Add rule to IDS config"
+    params:
+        rule:
+            description: "Rule to be added"
+            type: string
+            default: ""
+        service:
+            description: "Service where the rule is installed"
+            type: string
+            default: ""
+del-rule:
+    params:
+        service:
+            description: "Service where the rule is removed"
+            type: string
+            default: ""
+    description: "Delete last rule inserted into IDS Service"
