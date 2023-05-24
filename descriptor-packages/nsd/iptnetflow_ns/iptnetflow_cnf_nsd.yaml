@@ -8,7 +8,7 @@ nsd:
       - id: iptnetflow_cnf
         virtual-link-connectivity:
         - constituent-cpd-id:
-          - constituent-base-element-id: snort_cnf
+          - constituent-base-element-id: iptnetflow_cnf
             constituent-cpd-id: mgmtnet-ext
           virtual-link-profile-id: mgmtnet
         vnfd-id: iptnetflow_cnf

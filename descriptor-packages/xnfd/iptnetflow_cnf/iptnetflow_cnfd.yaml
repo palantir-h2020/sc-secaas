@@ -34,6 +34,9 @@ vnfd:
                     - name: port
                       data-type: INTEGER
                       value: 9999
+                    - name: iface
+                      data-type: STRING
+                      value: none
                 - seq: 1
                   name: start-netflow      
                   parameter:
@@ -46,6 +49,9 @@ vnfd:
                     - name: port
                       data-type: INTEGER
                       value: 32001
+                    - name: iface
+                      data-type: STRING
+                      value: none
                 - seq: 2
                   name: start-zeek
                   parameter:
@@ -64,6 +70,9 @@ vnfd:
                     - name: port
                       data-type: INTEGER
                       default-value: ""
+                    - name: iface
+                      data-type: STRING
+                      default-value: "none"
                 - name: stop-netflow
                   parameter:
                     - name: application-name
