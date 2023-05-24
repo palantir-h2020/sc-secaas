@@ -1,0 +1,70 @@
+vnfd:
+  product-name: wireguard_cnf
+  version: "1.0"
+  provider: UMU
+  description: |
+    K8s container deployment of Wireguard VPN for PALANTIR 
+  id: wireguard_cnf
+  mgmt-cp: mgmtnet-ext
+  ext-cpd:
+    - id: mgmtnet-ext
+      k8s-cluster-net: mgmtnet
+  kdu:
+    - name: wireguard-kdu
+      juju-bundle: bundle.yaml
+  k8s-cluster:
+    nets:
+      - id: mgmtnet
+  df:
+    - id: default-df
+      lcm-operations-configuration:
+        operate-vnf-op-config:
+          day1-2:
+            - id: wireguard-kdu
+#              initial-config-primitive:
+#                - seq: 0
+#                  name: init-config
+#                  parameter:
+#                    - name: application-name
+#                      data-type: STRING
+#                      value: wireguard
+              config-primitive:
+                - name: add-client
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: wireguard
+                    - name: public-key
+                      data-type: STRING
+                      default-value: ""
+                - name: health-check
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: wireguard
+                - name: init-config
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: wireguard
+                - name: get-server-data
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: wireguard
+                - name: disconnect-server
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: wireguard
+                - name: disconnect-client
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      default-value: wireguard
+                    - name: public-key
+                      data-type: STRING
+                      default-value: ""
+                    - name: ip
+                      data-type: STRING
+                      default-value: ""
