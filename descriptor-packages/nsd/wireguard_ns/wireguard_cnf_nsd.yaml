@@ -5,19 +5,19 @@ nsd:
     df:
     - id: default-df
       vnf-profile:
-      - id: iptnetflow_cnf
+      - id: wireguard_cnf
         virtual-link-connectivity:
         - constituent-cpd-id:
-          - constituent-base-element-id: iptnetflow_cnf
+          - constituent-base-element-id: wireguard_cnf
             constituent-cpd-id: mgmtnet-ext
           virtual-link-profile-id: mgmtnet
-        vnfd-id: iptnetflow_cnf
-    id: iptnetflow_ns
-    name: iptnetflow_ns
+        vnfd-id: wireguard_cnf
+    id: wireguard_ns
+    name:wireguard_ns
     version: '1.0'
     virtual-link-desc:
     - id: mgmtnet
       mgmt-network: true
       vim-network-name: mgmt
     vnfd-id:
-    - iptnetflow_cnf
+    - wireguard_cnf
