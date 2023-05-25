@@ -8,6 +8,7 @@ from ops.model import ActiveStatus, MaintenanceStatus, BlockedStatus
 import subprocess
 import os
 import psutil
+import fileinput
 import json
 
 logger = logging.getLogger(__name__)
@@ -65,8 +66,8 @@ class IDSCharm(CharmBase):
     def _on_start_configuration_action(self, event):
         """Configure Snort service"""
         try:
-                if (event.params["service"] == "suricata"):
-                    result = subprocess.run(["hostname","-I"], check=True, capture_output=True, text=True)
+            if (event.params["service"] == "suricata"):
+                result = subprocess.run(["hostname","-I"], check=True, capture_output=True, text=True)
                 output = result.stdout.split(' ')
                 output.pop(-1)
 
@@ -91,7 +92,7 @@ class IDSCharm(CharmBase):
 
                 for value in output:
                     if (("ens" in value) or ("eth" in value) or ("eno" in value)) and (len(value) < 6):
-                        interface = value
+                            interface = value
 
                 change = False
                 with fileinput.FileInput("/etc/suricata/suricata.yaml", inplace = True, backup ='.bak') as f:
@@ -125,7 +126,7 @@ class IDSCharm(CharmBase):
 
                 line = "ipvar HOME_NET [" + ",".join(str(x) for x in output) + "]"
                 with open("/etc/snort/etc/snort.conf", "r+") as f:
-                    content = f.read()
+                	    content = f.read()
                     with open("/etc/snort/etc/snort.conf", "w+") as f:
                         f.write(line + '\n' + content)
 
@@ -180,12 +181,11 @@ class IDSCharm(CharmBase):
                             listOfProcObjects.append(pinfo);
                         io = psutil.net_io_counters()
                         net_usage = {"bytes_sent": self.get_size(io.bytes_sent), "bytes_recv": self.get_size(io.bytes_recv)}
-                     event.set_results({
+                    event.set_results({
                         "output": f"Status: Suricata is running",
                         "service-usage": listOfProcObjects,
                         "network-usage": str(net_usage)
-                     })
-
+                    })
             else:
                 listOfProcObjects = []
                 for process in psutil.process_iter():
