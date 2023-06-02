@@ -309,7 +309,7 @@ class wgServices(CharmBase):
                     {   
                         "name": "iptnetflow",
                         "containerPort": 22,
-                        "protocol": "TCP",
+                        "protocol": "UDP",
                     }
                 ],
                 "command": ["/bin/bash","-ce","tail -f /dev/null"],
