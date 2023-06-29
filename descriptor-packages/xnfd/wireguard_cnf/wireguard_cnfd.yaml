@@ -21,13 +21,13 @@ vnfd:
         operate-vnf-op-config:
           day1-2:
             - id: wireguard-kdu
-#              initial-config-primitive:
-#                - seq: 0
-#                  name: init-config
-#                  parameter:
-#                    - name: application-name
-#                      data-type: STRING
-#                      value: wireguard
+              initial-config-primitive:
+                - seq: 0
+                  name: init-config
+                  parameter:
+                    - name: application-name
+                      data-type: STRING
+                      value: wireguard
               config-primitive:
                 - name: add-client
                   parameter:

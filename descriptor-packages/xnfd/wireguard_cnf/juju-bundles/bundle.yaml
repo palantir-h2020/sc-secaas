@@ -1,7 +1,7 @@
 description: Wireguard Bundle
 bundle: kubernetes
 applications:
-  iptnetflow:
+  wireguard:
     charm: ./wireguard_ubuntu-20.04-amd64.charm
     scale: 1
     resources:

@@ -13,7 +13,7 @@ nsd:
           virtual-link-profile-id: mgmtnet
         vnfd-id: wireguard_cnf
     id: wireguard_ns
-    name:wireguard_ns
+    name: wireguard_ns
     version: '1.0'
     virtual-link-desc:
     - id: mgmtnet
