@@ -158,7 +158,7 @@ class IptnetflowCharm(CharmBase):
                     {
                         "name": "iptnetflow",
                         "containerPort": 22,
-                        "protocol": "TCP",
+                        "protocol": "UDP",
                     }
                 ],
 #                "command": ["/bin/bash","-ce","python3 app.py",],
