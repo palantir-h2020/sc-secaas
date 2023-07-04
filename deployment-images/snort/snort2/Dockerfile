@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -y && apt-get install python3 python3-pip wget -y
+RUN apt-get update -y && apt-get install python3 python3-pip wget iproute2 -y
 RUN apt-get install gcc openssl libssl-dev bison flex libdnet autoconf libtool -y
 RUN apt-get install libpcap-dev -y
 RUN apt-get install libnghttp2-dev -y
@@ -38,9 +38,6 @@ WORKDIR /opt/filebeat
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.3-amd64.deb
 RUN dpkg -i filebeat-7.13.3-amd64.deb
 COPY ./filebeat.yml /etc/filebeat/filebeat.yml
-#COPY ./portscanning.rules /etc/snort/rules/local.rules
-#RUN rm /etc/snort/snort.conf
-#COPY ./snort.conf /etc/snort/snort.conf
 COPY ./etc /etc/snort/etc/
 COPY ./preproc_rules /etc/snort/preproc_rules/
 COPY ./so_rules /etc/snort/so_rules/

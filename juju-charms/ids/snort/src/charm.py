@@ -9,6 +9,7 @@ import subprocess
 import os
 import psutil
 import json
+from get_nic import getnic
 
 logger = logging.getLogger(__name__)
 
@@ -40,16 +41,17 @@ class SnortCharm(CharmBase):
                     })
                     return
 
-            result = subprocess.run(["ls","/sys/class/net"], check=True, capture_output=True, text=True)
-            output = result.stdout.split('\n')
-
             interface = "null"
-            for value in output:
-                if (("ens" in value) or ("eth" in value) or ("eno" in value)) and (len(value) < 6):
-                    interface = value
+            interfaces = getnic.interfaces()
+            status = getnic.ipaddr(interfaces)
+            for attribute, value in status.items():
+                for state in value.items():
+                    if (state[0] == "state" and state[1] == "UP"):
+                        if (("ens" in attribute) or ("eth" in attribute) or ("eno" in attribute)) and (len(attribute) < 6):
+                            interface = attribute
 
             subprocess.Popen(['snort', '-D', '-i', interface, '-c', '/etc/snort/etc/snort.conf', '-l', '/var/log/snort'])
-            os.system("service filebeat start")
+            subprocess.run(["service","filebeat","restart"], check=True, capture_output=True, text=True)
             event.set_results({
                 "output": f"Start: Snort service started successfully"
             })
@@ -92,7 +94,7 @@ class SnortCharm(CharmBase):
             for process in psutil.process_iter():
                 if "snort" in process.name() and "zombie" not in process.status():
                     process.kill()
-                    os.system("service filebeat stop")
+                    subprocess.run(["service","filebeat","stop"], check=True, capture_output=True, text=True)
                     event.set_results({
                         "output": f"Stop: Snort service stopped successfully"
                     })
@@ -113,7 +115,6 @@ class SnortCharm(CharmBase):
                 if "snort" in process.name() and "zombie" not in process.status():
                     pinfo = process.as_dict(attrs=['name', 'cpu_percent'])
                     pinfo['ram_usage'] = self.get_size(process.memory_info().vms)
-#                        if pinfo['name'] == 'snort' and pinfo['ram_usage'] != "0.00B":
                     listOfProcObjects.append(pinfo);
                     io = psutil.net_io_counters()
                     net_usage = {"bytes_sent": self.get_size(io.bytes_sent), "bytes_recv": self.get_size(io.bytes_recv)}
@@ -182,7 +183,7 @@ class SnortCharm(CharmBase):
         containers = [
             {
                 "name": self.framework.model.app.name,
-                "image": "lopeez97/snort2:latest",
+                "image": "lopeez97/snort2:1.0.0",
                 "ports": [
                     {
                         "name": "snort2",

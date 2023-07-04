@@ -2,3 +2,4 @@
 git+https://github.com/canonical/operator/#egg=ops
 jinja2==2.11.3
 psutil==5.9.4
+get-nic==0.0.3

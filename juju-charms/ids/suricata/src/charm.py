@@ -10,6 +10,7 @@ import os
 import fileinput
 import psutil
 import json
+from get_nic import getnic
 
 logger = logging.getLogger(__name__)
 
@@ -53,13 +54,14 @@ class SuricataCharm(CharmBase):
                 with open("/etc/suricata/suricata.yaml", "w+") as f:
                     f.write(line + '\n' + content)
 
-            result = subprocess.run(["ls","/sys/class/net"], check=True, capture_output=True, text=True)
-            output = result.stdout.split('\n')
-            interface = ""
-
-            for value in output:
-                if (("ens" in value) or ("eth" in value) or ("eno" in value)) and (len(value) < 6):
-                    interface = value
+            interface = "null"
+            interfaces = getnic.interfaces()
+            status = getnic.ipaddr(interfaces)
+            for attribute, value in status.items():
+                for state in value.items():
+                    if (state[0] == "state" and state[1] == "UP"):
+                        if (("ens" in attribute) or ("eth" in attribute) or ("eno" in attribute)) and (len(attribute) < 6):
+                            interface = attribute
 
             change = False
             with fileinput.FileInput("/etc/suricata/suricata.yaml", inplace = True, backup ='.bak') as f:
@@ -184,7 +186,7 @@ class SuricataCharm(CharmBase):
         containers = [
             {
                 "name": self.framework.model.app.name,
-                "image": "lopeez97/suricata:latest",
+                "image": "lopeez97/suricata:1.0.0",
                 "ports": [
                     {
                         "name": "suricata",

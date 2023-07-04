@@ -1,17 +1,15 @@
 FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -y
-RUN apt-get upgrade -y
-RUN apt-get install -y software-properties-common wget apt-transport-https net-tools
+RUN apt-get update -y && apt-get install software-properties-common wget apt-transport-https net-tools apt-utils -y
 RUN add-apt-repository universe
 RUN wget https://packages.ntop.org/apt/22.04/all/apt-ntop.deb
 RUN apt install ./apt-ntop.deb
 RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt-get update -y
-RUN apt-get upgrade -y
-RUN apt-get install -y ntap
-RUN apt-get install -y openjdk-11-jre nano net-tools
+#RUN apt-get upgrade -y
+RUN apt-get install ntap -y
+RUN apt-get install -y openjdk-11-jre nano iproute2
 
 WORKDIR /opt/filebeat
 RUN wget https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.13.3-amd64.deb
