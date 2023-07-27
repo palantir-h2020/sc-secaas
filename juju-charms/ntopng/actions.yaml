@@ -1,0 +1,59 @@
+launch-ntopng:
+    description: "Action to perform the API request to start ntopng."
+    params:
+        id-interface:
+            description: "ID of the interface from which information is to be obtained."
+            type: integer
+            default: ""
+    required:
+      - id-interface
+
+stop-ntopng:
+    description: "Action to perform the API request to stop ntopng."
+
+rrd:
+    description: "Action to obtain the data to recreate plots from different Round Robin Database format files."
+
+    params:
+        id-interface:
+            description: "ID of the interface from which information is to be obtained."
+            type: integer
+            default: ""
+        type-file:
+            description: "The type of file that has the data of the network. Option list: alerted_flows, num_hosts, traffic_anomalies_v2 and dropped_alerts."
+            type: string
+            default: ""
+    required:
+      - id-interface
+      - type-file
+
+get-alerts:
+    description: "Action to obtain the alerts from different types of alerts."
+
+    params:
+        id-interface:
+            description: "ID of the interface from which information is to be obtained."
+            type: integer
+            default: ""
+            
+        type-alert:
+            description: "The type of alert that occurs on the network. Option list: active_monitoring_alerts, flow_alerts, host_alerts, mac_alerts, snmp_alerts, network_alerts, interface_alerts and system_alerts."
+            type: string
+            default: ""
+    required:
+      - id-interface
+      - type-alert
+
+get-top-talkers:
+
+    description: "Action to obtain the top talkers on a interface"
+
+    params:
+        id-interface:
+            description: "ID of the interface from which information is to be obtained."
+            type: integer
+            default: ""
+    required:
+      - id-interface
+health-check:
+    description: "Check the status of the internal services"
