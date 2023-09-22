@@ -1,0 +1,3 @@
+b45a300d1776b03816efb597925f4a35	ntopng_cnf/ntopng_cnfd.yaml
+49930bc4eb4628ffc38c68aa59f515b2	ntopng_cnf/juju-bundles/bundle.yaml
+a199c09e96b005197adcf02b2ca073aa	ntopng_cnf/juju-bundles/ntopng_ubuntu-20.04-amd64.charm

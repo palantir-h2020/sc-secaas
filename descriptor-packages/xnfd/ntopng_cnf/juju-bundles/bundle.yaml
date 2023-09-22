@@ -1,0 +1,8 @@
+description: Ntopng Bundle
+bundle: kubernetes
+applications:
+  ntopng:
+    charm: ./ntopng_ubuntu-20.04-amd64.charm
+    scale: 1
+    resources:
+      image: jeffreysilver/ntopng_server:kubernetes
